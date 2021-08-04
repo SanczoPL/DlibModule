@@ -1,0 +1,40 @@
+{
+	"General":
+	{
+		"LogLevel": 1,
+		"ThreadsMax": 20,
+		"Standalone": false
+	},
+	"Dlib":
+	{
+		"MinibatchSize": 40,
+		"ImageSize": 150,
+		"Queqe": 50,
+		"DnnName" : "dnn",
+		"SynchName": "temp",
+		"UseTwoCUDA" :  false,
+		"LearningRate" : 0.1,
+		"DronType" : "BLACK",
+		"GraphType":"Graph_dlib",
+		"DronTypes" : ["BLACK_WHITE", "BLACK", "WHITE"],
+		"GraphTypes":["Graph_dlib"],
+		"MaxNumEpochs": 100,
+		"SynchTime": 10,
+		"momentum": 0.9,
+		"EpochsToLogging": 10
+	},
+	"ConfigLinux": 
+	{
+		"Dataset": "/home/matczak/repo/Optimization/DlibModule/configs/dataset.json",
+		"Preprocess": "/home/matczak/repo/Optimization/DlibModule/configs/preprocess.json",
+		"Postprocess": "/home/matczak/repo/Optimization/DlibModule/configs/postprocess.json",
+		"LogsFolder" : "/home/matczak/repo/logs/"
+	},
+	"ConfigWin": 
+	{
+		"Dataset": "E:\\repo\\Optimization\\DlibModule\\configs\\dataset.json",
+		"Preprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\preprocess.json",
+		"Postprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
+		"LogsFolder" : "E:\\repo\\logs\\"
+	}
+}
