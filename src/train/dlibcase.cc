@@ -590,7 +590,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	#endif
 
 	seg_trainer.set_learning_rate_shrink_factor(0.1);
-	seg_trainer.set_iterations_without_progress_threshold(200);
+	seg_trainer.set_iterations_without_progress_threshold(500);
 	seg_trainer.set_mini_batch_size(m_minBatchSize);
 	seg_trainer.set_max_num_epochs(m_maxNumEpochs);
 	seg_trainer.be_verbose();
@@ -753,7 +753,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		// We will run until the learning rate has dropped by a factor of 1e-4.
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
 		int counter{0};
-		while (seg_trainer.get_learning_rate() >= 0.00001)
+		while (seg_trainer.get_learning_rate() >= 0.000001)
 		{
 			counter++;
 			samples.clear();
@@ -767,7 +767,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 				labels.push_back(std::move(temp.label_image));
 			}
 			seg_trainer.train_one_step(samples, labels);
-			if(counter>=500)
+			if(counter>=1000)
 			{
 				break;
 			}
