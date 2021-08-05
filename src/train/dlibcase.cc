@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 // THREADS: 1/4/8/16/32
-#define THREADS 4
+#define THREADS 16
 //#define DEBUG
 //#define DEBUG_POSTPROCESSING
 
@@ -563,6 +563,8 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	Logger->debug("truth_images.size:{}", truth_images.size());
 	#endif
 	
+	std::cout << "seg_net:" << seg_net << std::endl;
+
 	int imageSize = m_imageSize;
 	const std::string synchronization_file_name = m_synchronizationNetworkFileName.toStdString();
 	#ifdef DEBUG

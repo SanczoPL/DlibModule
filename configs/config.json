@@ -19,7 +19,7 @@
 		"DronTypes" : ["BLACK_WHITE", "BLACK", "WHITE"],
 		"GraphTypes":["Graph_dlib"],
 		"MaxNumEpochs": 100,
-		"SynchTime": 10,
+		"SynchTime": 20,
 		"momentum": 0.9,
 		"EpochsToLogging": 10
 	},
