@@ -8,15 +8,15 @@
 	"Dlib":
 	{
 		"MinibatchSize": 40,
-		"ImageSize": 150,
-		"Queqe": 50,
+		"ImageSize": 100,
+		"Queqe": 100,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
 		"UseTwoCUDA" :  false,
 		"LearningRate" : 0.1,
 		"DronType" : "BLACK",
 		"GraphType":"Graph_dlib",
-		"DronTypes" : ["BLACK_WHITE", "BLACK", "WHITE"],
+		"DronTypes" : [ "BLACK", "WHITE","BLACK_WHITE"],
 		"GraphTypes":["Graph_dlib"],
 		"MaxNumEpochs": 100,
 		"SynchTime": 20,

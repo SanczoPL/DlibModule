@@ -172,77 +172,15 @@ template <typename SUBNET> using concat_utag4 = resize_and_concat<utag4,utag4_,S
 
 // ----------------------------------------------------------------------------------------
 
-// training network type
-using seg_bnet_type = dlib::loss_binary_log_per_pixel<
-                              dlib::cont<1,1,1,1,1,
-                              dlib::relu<dlib::bn_con<dlib::cont<16,7,7,2,2,
-                              concat_utag1<level1t<
-                              concat_utag2<level2t<
-                              concat_utag3<level3t<
-                              concat_utag4<level4t<
-                              level4<utag4<
-                              level3<utag3<
-                              level2<utag2<
-                              level1<dlib::max_pool<3,3,2,2,utag1<
-                              dlib::relu<dlib::bn_con<dlib::con<16,7,7,2,2,
-                              dlib::input<dlib::matrix<unsigned char>>
-                              >>>>>>>>>>>>>>>>>>>>>>>>>;
-
-// testing network type (replaced batch normalization with fixed affine transforms)
-using seg_anet_type = dlib::loss_binary_log_per_pixel<
-                              dlib::cont<1,1,1,1,1,
-                              dlib::relu<dlib::affine<dlib::cont<16,7,7,2,2,
-                              concat_utag1<alevel1t<
-                              concat_utag2<alevel2t<
-                              concat_utag3<alevel3t<
-                              concat_utag4<alevel4t<
-                              alevel4<utag4<
-                              alevel3<utag3<
-                              alevel2<utag2<
-                              alevel1<dlib::max_pool<3,3,2,2,utag1<
-                              dlib::relu<dlib::affine<dlib::con<16,7,7,2,2,
-                              dlib::input<dlib::matrix<dlib::rgb_pixel>>
-                              >>>>>>>>>>>>>>>>>>>>>>>>>;
-
-
-using net_type2 = dlib::loss_binary_log <
-    dlib::fc < 1,
-    dlib::relu<dlib::fc<10,
-    dlib::relu<dlib::fc<20,
-    dlib::relu<dlib::fc<20, dlib::dropout<
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::input<dlib::matrix<unsigned char>>
-    >>>>>>>>>>>>>;
-
-using net_type213 = dlib::loss_binary_log_per_pixel <
-    dlib::cont < 1, 1, 1, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::input<dlib::matrix<unsigned char>>
-    >>>>>>>>>>;
-
-using net_type424 = dlib::loss_binary_log_per_pixel <
-    dlib::cont < 1, 1, 1, 1, 1,
-    //dlib::relu<dlib::dropout<
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::dropout<
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
-    dlib::input<dlib::matrix<unsigned char>>
-    >>>>>>>>>>>>;
-
 using net_type = dlib::loss_binary_log_per_pixel <          //1
     dlib::cont < 1, 1, 1, 1, 1,                             //1
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,                    //2
     dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //3
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //2
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,                    //2
+    dlib::relu<dlib::con<100, 5, 5, 1, 1,dlib::dropout<      //3
+    dlib::relu<dlib::con<150, 5, 5, 1, 1,dlib::dropout<      //3
+    dlib::relu<dlib::con<100, 5, 5, 1, 1,dlib::dropout<      //2
+    dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //3
     dlib::input<dlib::matrix<unsigned char>>                //0
-    >>>>>>>>>>>>;                                           //11
+    >>>>>>>>>>>>>>>>>;                                           //11
     
 
 
