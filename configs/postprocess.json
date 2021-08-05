@@ -1,43 +1,5 @@
 
 {
-    "Graph_two_filter_test":
-    [{
-        "Name": "image",
-        "Active": 0,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 2, "Signal":0},{"Name": "B1", "Active": 4, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "GT",
-        "Active": 1,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 2, "Signal":0},{"Name": "B1", "Active": 4, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "ROI",
-        "Active": 2,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "image", "Active": 0, "Signal":0},{"Name": "GT", "Active": 1, "Signal":0}],
-        "Config": {"Name": "DlibNetwork"}
-    },{
-        "Name": "Fitness",
-        "Active": 3,
-        "Type": "Fitness",
-        "Next":[{"Name": "OUT1", "Active": -1, "Signal":0}],
-        "Prev":[{"Name": "A", "Active": 2, "Signal":0}],
-        "Config": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Precision_FMeasure"},
-		"ConfigALL": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Specificity_Precision_NegativePrecision_FMeasure_FitnessTime"}
-    },{
-        "Name": "Encoder",
-        "Active": 4,
-        "Type": "Encoder",
-        "Next":[{"Name": "OUT2", "Active": -1, "Signal":0}],
-        "Prev":[{"Name": "image", "Active": 0, "Signal":0},{"Name": "GT", "Active": 1, "Signal":0}],
-        "Config": {"Name": "Preview", "Path": "", "FPS":10.0, "Width":1800, "Height":1500,  "Type":".mp4", "Iter": 1000}
-    }],
     "Graph_dlib":
     [{
         "Name": "image",
@@ -64,8 +26,8 @@
         "Name": "ROI",
         "Active": 3,
         "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 4, "Signal":0},{"Name": "B1", "Active": 4, "Signal":1},
-                {"Name": "B1", "Active": 4, "Signal":2}],
+        "Next":[{"Name": "0", "Active": 4, "Signal":0},{"Name": "1", "Active": 4, "Signal":1},
+                {"Name": "2", "Active": 4, "Signal":2}, {"Name": "3", "Active": 4, "Signal":3}],
         "Prev":[{"Name": "image", "Active": 0, "Signal":0},{"Name": "GT", "Active": 1, "Signal":0},
                 {"Name": "image", "Active": 2, "Signal":0}],
         "Config": {"Name": "DlibNetwork"}
@@ -74,9 +36,9 @@
         "Active": 4,
         "Type": "Fitness",
         "Next":[{"Name": "B1", "Active": 5, "Signal":0},{"Name": "B1", "Active": 5, "Signal":1},
-                {"Name": "B1", "Active": 5, "Signal":2}],
+                {"Name": "B1", "Active": 5, "Signal":2},{"Name": "B1", "Active": 5, "Signal":3}],
         "Prev":[{"Name": "image", "Active": 3, "Signal":0},{"Name": "GT", "Active": 3, "Signal":1},
-                {"Name": "image", "Active": 3, "Signal":2}],
+                {"Name": "image", "Active": 3, "Signal":2},{"Name": "image", "Active": 3, "Signal":3}],
         "Config": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Precision_FMeasure"},
         "ConfigALL": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Specificity_Precision_NegativePrecision_FMeasure_FitnessTime"}
     },{
@@ -85,112 +47,8 @@
         "Type": "Encoder",
         "Next":[],
         "Prev":[{"Name": "image", "Active": 4, "Signal":0},{"Name": "GT", "Active": 4, "Signal":1},
-                {"Name": "image", "Active": 4, "Signal":2}],
-        "Config3": {"Name": "None", "Path": "123","FPS":10.0, "Width":1800, "Height":1500,  "Type":".mp4", "Iter": 1000},
-        "Config": {"Name": "Preview", "Path": "mp4","FPS":10.0, "Width":1500, "Height":550,  "Type":".mp4", "Iter": 1000}
-    }],
-    "Graph_estimator":
-    [{
-        "Name": "image",
-        "Active": 0,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "GT",
-        "Active": 1,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "INPUT",
-        "Active": 2,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "ROI",
-        "Active": 3,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 4, "Signal":0},{"Name": "B1", "Active": 4, "Signal":1},
-                {"Name": "B1", "Active": 4, "Signal":2}],
-        "Prev":[{"Name": "image", "Active": 0, "Signal":0},{"Name": "GT", "Active": 1, "Signal":0},
-                {"Name": "image", "Active": 2, "Signal":0}],
-        "Config2": {"Name": "DlibNetwork"},
-        "Config": {"Name": "CodeStats2014", "Width": 50,"Height":50, "DronSize":5}
-    },{
-        "Name": "Fitness",
-        "Active": 4,
-        "Type": "Fitness",
-        "Next":[{"Name": "B1", "Active": 5, "Signal":0},{"Name": "B1", "Active": 5, "Signal":1},
-                {"Name": "B1", "Active": 5, "Signal":2}],
-        "Prev":[{"Name": "image", "Active": 3, "Signal":0},{"Name": "GT", "Active": 3, "Signal":1},
-                {"Name": "image", "Active": 3, "Signal":2}],
-        "Config": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Precision_FMeasure"},
-        "ConfigALL": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Specificity_Precision_NegativePrecision_FMeasure_FitnessTime"}
-    },{
-        "Name": "Encoder",
-        "Active": 5,
-        "Type": "Encoder",
-        "Next":[],
-        "Prev":[{"Name": "image", "Active": 4, "Signal":0},{"Name": "GT", "Active": 4, "Signal":1},
-                {"Name": "image", "Active": 4, "Signal":2}],
-        "Config": {"Name": "None", "Path": "123","FPS":10.0, "Width":1800, "Height":1500,  "Type":".mp4", "Iter": 1000},
-        "Config2": {"Name": "Preview", "Path": "mp4","FPS":10.0, "Width":900, "Height":300,  "Type":".mp4", "Iter": 1000}
-    }],
-    "Graph_estimator_with_filters":
-    [{
-        "Name": "image",
-        "Active": 0,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "GT",
-        "Active": 1,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "INPUT",
-        "Active": 2,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 3, "Signal":0}],
-        "Prev":[{"Name": "IN", "Active": -1, "Signal":0}],
-        "Config":{"Name": "None"}
-    },{
-        "Name": "ROI",
-        "Active": 3,
-        "Type": "Comapre",
-        "Next":[{"Name": "B1", "Active": 4, "Signal":0},{"Name": "B1", "Active": 4, "Signal":1},
-                {"Name": "B1", "Active": 4, "Signal":2}],
-        "Prev":[{"Name": "image", "Active": 0, "Signal":0},{"Name": "GT", "Active": 1, "Signal":0},
-                {"Name": "image", "Active": 2, "Signal":0}],
-        "Config2": {"Name": "DlibNetwork"},
-        "Config": {"Name": "CodeStats2014", "Width": 50,"Height":50, "DronSize":5}
-    },{
-        "Name": "Fitness",
-        "Active": 4,
-        "Type": "Fitness",
-        "Next":[{"Name": "B1", "Active": 5, "Signal":0},{"Name": "B1", "Active": 5, "Signal":1},
-                {"Name": "B1", "Active": 5, "Signal":2}],
-        "Prev":[{"Name": "image", "Active": 3, "Signal":0},{"Name": "GT", "Active": 3, "Signal":1},
-                {"Name": "image", "Active": 3, "Signal":2}],
-        "Config": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Precision_FMeasure"},
-        "ConfigALL": {"Name": "BGFitness", "FitnessFunction": "Accuracy_Recall_Specificity_Precision_NegativePrecision_FMeasure_FitnessTime"}
-    },{
-        "Name": "Encoder",
-        "Active": 5,
-        "Type": "Encoder",
-        "Next":[],
-        "Prev":[{"Name": "image", "Active": 4, "Signal":0},{"Name": "GT", "Active": 4, "Signal":1},
-                {"Name": "image", "Active": 4, "Signal":2}],
-        "Config": {"Name": "None", "Path": "123","FPS":10.0, "Width":1800, "Height":1500,  "Type":".mp4", "Iter": 1000},
-        "Config2": {"Name": "Preview", "Path": "mp4","FPS":10.0, "Width":900, "Height":300,  "Type":".mp4", "Iter": 1000}
+                {"Name": "image", "Active": 4, "Signal":2}, {"Name": "imageCOMPARE", "Active": 4, "Signal":3}],
+        "Config3": {"Name": "None", "Path": "123","FPS":10.0, "Width":1000, "Height":1500,  "Type":".mp4", "Iter": 1000},
+        "Config": {"Name": "Preview", "Path": "mp4","FPS":10.0, "Width":1000, "Height":1100,  "Type":".mp4", "Iter": 1000}
     }]
 }
