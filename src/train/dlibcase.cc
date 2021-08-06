@@ -79,8 +79,11 @@ constexpr auto INPUT_TYPE{ "InputType" };
 constexpr auto OUTPUT_TYPE{ "OutputType" };
 
 
-DlibCase::DlibCase(DataMemory* data)
+DlibCase::DlibCase(DataMemory* data, FileLogger *fileLoggerTrain, FileLogger *fileLoggerTest, FileLogger *fileLoggerJSON)
 : m_dataMemory(data)
+, m_fileLoggerTrain(fileLoggerTrain)
+, m_fileLoggerTest(fileLoggerTest)
+, m_fileLoggerJSON(fileLoggerJSON)
 , m_useTwoCuda(false)
 {
 	#ifdef DEBUG
@@ -203,14 +206,16 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	
 	qint64 _nowTime = qint64(QDateTime::currentMSecsSinceEpoch());
 	
-	m_fileName = m_logsFolderTestCase + m_synchName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileName = m_logsFolderTestCase + "train" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileLoggerTrain->onConfigure(m_fileName + ".txt");
+	m_fileName = m_logsFolderTestCase + "test" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileLoggerTest->onConfigure(m_fileName + ".txt");
+	m_fileName = m_logsFolderTestCase + "best" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileLoggerTest->onConfigure(m_fileName + ".json");
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
-	emit(configureLogger((m_fileName + ".txt"), false));
-	emit(configureLoggerJSON((m_fileName + ".json"), false));
-
 	if (!m_dataMemory->loadNamesOfFile())
 	{
 		return;
@@ -276,21 +281,22 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
 		net_type segc;
 		dlib::deserialize(m_outputNetworkFileName.toStdString()) >> segc;
-		DlibCase::testNetwork(segc);
+		DlibCase::testNetwork("Train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
+		DlibCase::testNetwork("Test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
 	}
 	
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() test network... ok");
 	#endif
 	m_timer.reset();
-	DlibCase::testNetwork(segb);
+	
 	emit(newConfig());
 	#ifdef DEBUG
 	Logger->debug("DlibCase::configure() done");
 	#endif
 }
 
-void DlibCase::testNetwork(net_type segb)
+void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt, FileLogger* fileLogger)
 {
 	// Show inference results in a window.
 	//dlib::image_window win;
@@ -301,19 +307,16 @@ void DlibCase::testNetwork(net_type segb)
 	#ifdef DEBUG
 	Logger->debug("DlibCase::testNetwork() get_files_in_directory_tree()");
 	#endif
-
 	// Find supported image files.
-	const std::vector<dlib::file> files = dlib::get_files_in_directory_tree((m_configPath+m_cleanTestPath).toStdString(), dlib::match_endings(".jpeg .jpg .png"));
-	const std::vector<dlib::file> files_label = dlib::get_files_in_directory_tree((m_configPath+m_gtTestPath).toStdString(), dlib::match_endings(".jpeg .jpg .png"));
+	const std::vector<dlib::file> files = dlib::get_files_in_directory_tree(clean.toStdString(), dlib::match_endings(".jpeg .jpg .png"));
+	const std::vector<dlib::file> files_label = dlib::get_files_in_directory_tree(gt.toStdString(), dlib::match_endings(".jpeg .jpg .png"));
 
 	dlib::rand rnd;
 
-	std::cout << "Found " << files.size() << " images, processing..." << std::endl;
+	std::cout << "Found " << files.size() << " " << id.toStdString() << " images, processing..." << std::endl;
 	#ifdef DEBUG
 	Logger->debug("DlibCase::loadNetwork() for loop:");
 	#endif
-
-	//for (const dlib::file& file : files)
 	int num_right = 0;
 	int num_wrong = 0;
 	for(int i = 0 ; i < m_postprocess.size() ; i++)
@@ -375,17 +378,25 @@ void DlibCase::testNetwork(net_type segb)
 	}
 
 	struct fitness fs = DlibCase::finishPostProcessing();
+	DlibCase::logPopulation(id, fs, fileLogger);
 
+	#ifdef DEBUG
+	Logger->debug("DlibCase::loadNetwork() for loop end:");
+	#endif
+}
+
+void DlibCase::logPopulation(QString id, fitness fs, FileLogger * fileLogger)
+{
+	m_timer.stop();
 	Logger->info(
-		"ID:{:04d} B:{:f} (fn:{},fp:{},tn:{},tp:{}) time:{:3.0f}[ms] ",
-		123456, fs.fitness,
+		"ID:{} B:{:f} (fn:{},fp:{},tn:{},tp:{}) time:{:3.0f}[ms] ",
+		id.toStdString(), fs.fitness,
 		fs.fn, fs.fp,
 		fs.tn, fs.tp,
 		m_timer.getTimeMilli());
 
-
 	QStringList list;
-	//list.push_back(123+ " ");
+	list.push_back(id + " ");
 	list.push_back(QString().setNum(fs.fitness, 'f', 4) + " ");
 
 	list.push_back(QString::number(fs.fn) + " ");
@@ -394,16 +405,8 @@ void DlibCase::testNetwork(net_type segb)
 	list.push_back(QString::number(fs.tp) + " ");
 	list.push_back(QString().setNum(m_timer.getTimeMilli(), 'f', 0) + " ");
 	list.push_back("\n");
-	emit(appendToFileLogger(list));
-
-	#ifdef DEBUG
-	Logger->debug("DlibCase::loadNetwork() for loop2 end:");
-	#endif
-
-	#ifdef DEBUG
-	Logger->debug("DlibCase::loadNetwork() for loop end:");
-	#endif
-
+	fileLogger->onAppendFileLogger(list);
+	m_timer.start();
 }
 
 void DlibCase::postprocessing()

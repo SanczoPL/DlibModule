@@ -1,7 +1,7 @@
 #include "train/mainloop.h"
 
-#define DEBUG
-#define DEBUG_CONFIG
+//#define DEBUG
+//#define DEBUG_CONFIG
 
 constexpr auto GENERAL{ "General" };
 constexpr auto DLIB{ "Dlib" };
@@ -167,14 +167,18 @@ void MainLoop::createStartupThreads()
 	m_dataMemory->moveToThread(m_dataMemoryThread);
 	connect(m_dataMemoryThread, &QThread::finished, m_dataMemory, &QObject::deleteLater);
 	m_dataMemoryThread->start();
+	
+	m_fileLoggerTrainThread = new QThread();
+	m_fileLoggerTrain = new FileLogger() ;
+	m_fileLoggerTrain->moveToThread(m_fileLoggerTrainThread);
+	connect(m_fileLoggerTrainThread, &QThread::finished, m_fileLoggerTrain, &QObject::deleteLater);
+	m_fileLoggerTrainThread->start();
 
-	m_dlib = new DlibCase(m_dataMemory);
-
-	m_fileLoggerThread = new QThread();
-	m_fileLogger = new FileLogger() ;
-	m_fileLogger->moveToThread(m_fileLoggerThread);
-	connect(m_fileLoggerThread, &QThread::finished, m_fileLogger, &QObject::deleteLater);
-	m_fileLoggerThread->start();
+	m_fileLoggerTestThread = new QThread();
+	m_fileLoggerTest = new FileLogger() ;
+	m_fileLoggerTest->moveToThread(m_fileLoggerTestThread);
+	connect(m_fileLoggerTestThread, &QThread::finished, m_fileLoggerTest, &QObject::deleteLater);
+	m_fileLoggerTestThread->start();
 
 	m_fileLoggerJSONThread = new QThread();
 	m_fileLoggerJSON = new FileLogger();
@@ -182,17 +186,13 @@ void MainLoop::createStartupThreads()
 	connect(m_fileLoggerJSONThread, &QThread::finished, m_fileLoggerJSON, &QObject::deleteLater);
 	m_fileLoggerJSONThread->start();
 
+	m_dlib = new DlibCase(m_dataMemory, m_fileLoggerTrain, m_fileLoggerTest, m_fileLoggerJSON);
+
 	m_timer = new QTimer(this);
 	m_timer->start(1000);
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 	connect(m_dlib, &DlibCase::newConfig, this, &MainLoop::onNextConfig);
 	connect(m_dlib, &DlibCase::dlibConfigured, this, &MainLoop::onDlibConfigured);
-
-	connect(m_dlib, &DlibCase::configureLogger, m_fileLogger, &FileLogger::configure);
-	connect(m_dlib, &DlibCase::configureLoggerJSON, m_fileLoggerJSON, &FileLogger::configure);
-
-	connect(m_dlib, &DlibCase::appendToFileLogger, m_fileLogger, &FileLogger::appendFileLogger);
-	connect(m_dlib, &DlibCase::logJsonBest, m_fileLoggerJSON, &FileLogger::logJsonBest);
 }
 
 void MainLoop::createThreads()
@@ -201,7 +201,7 @@ void MainLoop::createThreads()
 MainLoop::MainLoop(QJsonObject a_config)
 	:m_config{ a_config },
 	m_dataMemoryLoaded{false},
-	m_dlibConfigured{ false },
+	m_dlibConfigured{false},
 	m_validTask{false},
 	m_firstTime{true},
 	m_graphType{ a_config[DLIB].toObject()[GRAPH_TYPE].toString()},

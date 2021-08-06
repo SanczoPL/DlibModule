@@ -37,7 +37,7 @@ class DlibCase : public QObject {
 	Q_OBJECT
   
 	public:
-		DlibCase(DataMemory* data);
+		DlibCase(DataMemory* data, FileLogger *fileLoggerTrain, FileLogger *fileLoggerTest, FileLogger *fileLoggerJSON);
 		~DlibCase();
 		void process();
 
@@ -60,14 +60,14 @@ class DlibCase : public QObject {
 	private:
 		void loadFromConfig(QJsonObject const& a_config);
 		void iteration();
-		void logPopulation();
 		void clearData();
 		void loadDronConfigs(QJsonArray const& a_preprocess);
 		void loadDatasetName(QJsonObject const& a_dataset);
 		void handleBestPopulation();
-		void testNetwork(net_type segb);
+		void testNetwork(QString id, net_type segb, QString clean, QString gt, FileLogger* fileLogger);
 		void postprocessing();
 		fitness finishPostProcessing();
+		void logPopulation(QString id, fitness fs, FileLogger * fileLogger);
 
 	private:
 		QRandomGenerator* m_randomGenerator;
@@ -103,8 +103,9 @@ class DlibCase : public QObject {
 		double m_bestChangeLast{};
 		double m_delta{};
 
-		FileLogger *m_fileLogger;
-		FileLogger* m_fileLoggerJSON;
+		FileLogger *m_fileLoggerTrain;
+		FileLogger *m_fileLoggerTest;
+		FileLogger *m_fileLoggerJSON;
 		
 		cv::TickMeter m_timer;
 
