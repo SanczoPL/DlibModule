@@ -117,7 +117,7 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 			MainLoop::loadConfigs(m_configPaths, m_graphTypes[graf].toString());
 
 			// Add noise:
-			for (int i = 0; i < 101; i += 10)
+			for (int i = 0; i < 101; i += 5)
 			{
 				for(int j = 0 ; j < m_dlibConfig.preprocess.size() ; j++)
 				{

@@ -744,9 +744,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		data_loader32.join();
 #endif
 	};
-
 	Logger->debug("start learning...");
-
 	try
 	{
 		// The main training loop.  Keep making mini-batches and giving them to the trainer.
@@ -771,9 +769,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 			{
 				break;
 			}
-			
 		}
-		
 	}
 	catch (std::exception& e)
 	{
