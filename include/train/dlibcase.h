@@ -102,6 +102,7 @@ class DlibCase : public QObject {
 		double m_fitnessThreshold{};
 		double m_bestChangeLast{};
 		double m_delta{};
+		double m_currentLearningRate{};
 
 		FileLogger *m_fileLoggerTrain;
 		FileLogger *m_fileLoggerTest;

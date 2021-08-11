@@ -85,6 +85,7 @@ DlibCase::DlibCase(DataMemory* data, FileLogger *fileLoggerTrain, FileLogger *fi
 , m_fileLoggerTest(fileLoggerTest)
 , m_fileLoggerJSON(fileLoggerJSON)
 , m_useTwoCuda(false)
+, m_currentLearningRate(0.01)
 {
 	#ifdef DEBUG
 	Logger->debug("DlibCase::DlibCase()");
@@ -275,7 +276,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	#endif
 
 	net_type segb;
-	for(int i = 0 ; i < 10 ; i++)
+	for(int i = 0 ; i < 3 ; i++)
 	{
 		segb = this->train_segmentation_network(list);
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
@@ -283,6 +284,10 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		dlib::deserialize(m_outputNetworkFileName.toStdString()) >> segc;
 		DlibCase::testNetwork("Train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
 		DlibCase::testNetwork("Test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
+		if (m_currentLearningRate <= 0.000001)
+		{
+			break;
+		}
 	}
 	
 	#ifdef DEBUG
@@ -756,6 +761,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		int counter{0};
 		while (seg_trainer.get_learning_rate() >= 0.000001)
 		{
+			m_currentLearningRate = seg_trainer.get_learning_rate();
 			counter++;
 			samples.clear();
 			labels.clear();
@@ -768,7 +774,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 				labels.push_back(std::move(temp.label_image));
 			}
 			seg_trainer.train_one_step(samples, labels);
-			if(counter>=1000)
+			if(counter >= 10000)
 			{
 				break;
 			}

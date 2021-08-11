@@ -2,7 +2,7 @@
 	"General":
 	{
 		"LogLevel": 1,
-		"ThreadsMax": 20,
+		"ThreadsMax": 10,
 		"Standalone": false
 	},
 	"Dlib":
@@ -14,9 +14,10 @@
 		"SynchName": "temp",
 		"UseTwoCUDA" :  false,
 		"LearningRate" : 0.1,
-		"DronType" : "BLACK",
+		"DronType" : "BLACK_WHITE",
 		"GraphType":"Graph_dlib",
-		"DronTypes" : [ "BLACK", "WHITE","BLACK_WHITE"],
+		"DronTypes_ALL" : [ "BLACK", "WHITE","BLACK_WHITE"],
+		"DronTypes" : [ "BLACK_WHITE", "WHITE","BLACK"],
 		"GraphTypes":["Graph_dlib"],
 		"MaxNumEpochs": 100,
 		"SynchTime": 20,
