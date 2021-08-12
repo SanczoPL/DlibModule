@@ -172,7 +172,7 @@ template <typename SUBNET> using concat_utag4 = resize_and_concat<utag4,utag4_,S
 
 // ----------------------------------------------------------------------------------------
 
-using net_type = dlib::loss_binary_log_per_pixel <          //1
+using net_type2 = dlib::loss_binary_log_per_pixel <          //1
     dlib::cont < 1, 1, 1, 1, 1,                             //1
     dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //3
     dlib::relu<dlib::con<100, 5, 5, 1, 1,dlib::dropout<      //3
@@ -182,7 +182,12 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
     dlib::input<dlib::matrix<unsigned char>>                //0
     >>>>>>>>>>>>>>>>>;                                           //11
     
-
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+    dlib::con < 1, 1, 1, 1, 1,                             //1
+    
+    dlib::relu<dlib::con<50, 5, 5, 1, 1,
+    dlib::input<dlib::matrix<unsigned char>>                //0
+    >>>>;
 
 // A single training sample for segmentation. A mini-batch comprises many of these.
 struct seg_training_sample

@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 // THREADS: 1/4/8/16/32
-#define THREADS 16
+#define THREADS 4
 //#define DEBUG
 //#define DEBUG_POSTPROCESSING
 
@@ -555,6 +555,8 @@ void DlibCase::clearData()
 
 net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>& truth_images)
 {
+	dlib::set_dnn_prefer_smallest_algorithms();
+
 	m_timer.start();
 	net_type seg_net;
 
