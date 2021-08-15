@@ -212,7 +212,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	m_fileName = m_logsFolderTestCase + "test" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	m_fileLoggerTest->onConfigure(m_fileName + ".txt");
 	m_fileName = m_logsFolderTestCase + "best" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
-	m_fileLoggerTest->onConfigure(m_fileName + ".json");
+	m_fileLoggerJSON->onConfigure(m_fileName + ".json");
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
@@ -274,21 +274,28 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	Logger->debug("Dlib::configure() m_outputNetworkFileName:{}", m_outputNetworkFileName.toStdString());
 	Logger->debug("Dlib::configure() test network...");
 	#endif
+	dlib::set_dnn_prefer_smallest_algorithms();
 
 	net_type segb;
-	for(int i = 0 ; i < 3 ; i++)
+	for(int i = 0 ; i < 2 ; i++)
 	{
 		segb = this->train_segmentation_network(list);
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
 		net_type segc;
 		dlib::deserialize(m_outputNetworkFileName.toStdString()) >> segc;
-		DlibCase::testNetwork("Train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
+		
 		DlibCase::testNetwork("Test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
-		if (m_currentLearningRate <= 0.000001)
+		if (m_currentLearningRate <= 0.00001)
 		{
 			break;
 		}
+		else
+		{
+			Logger->debug("m_currentLearningRate:{}",m_currentLearningRate);
+		}
 	}
+
+	DlibCase::testNetwork("Train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
 	
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() test network... ok");
@@ -303,15 +310,13 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 
 void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt, FileLogger* fileLogger)
 {
-	// Show inference results in a window.
-	//dlib::image_window win;
-
 	dlib::matrix<unsigned char> input_image;
 	dlib::matrix<unsigned char> label_image;
 
 	#ifdef DEBUG
 	Logger->debug("DlibCase::testNetwork() get_files_in_directory_tree()");
 	#endif
+
 	// Find supported image files.
 	const std::vector<dlib::file> files = dlib::get_files_in_directory_tree(clean.toStdString(), dlib::match_endings(".jpeg .jpg .png"));
 	const std::vector<dlib::file> files_label = dlib::get_files_in_directory_tree(gt.toStdString(), dlib::match_endings(".jpeg .jpg .png"));
@@ -555,8 +560,6 @@ void DlibCase::clearData()
 
 net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>& truth_images)
 {
-	dlib::set_dnn_prefer_smallest_algorithms();
-
 	m_timer.start();
 	net_type seg_net;
 
@@ -565,7 +568,9 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	//std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
-	//dlib::layer<3>(seg_net).layer_details() = dlib::dropout_(0.9);
+	//dlib::layer<6>(seg_net).layer_details() = dlib::dropout_(0.9);
+	//dlib::layer<9>(seg_net).layer_details() = dlib::dropout_(0.9);
+	//dlib::layer<10>(seg_net).layer_details() = dlib::dropout_(0.9);
 
 	#ifdef DEBUG
 	std::cout << "seg_net:" << seg_net << std::endl;
@@ -607,8 +612,9 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	seg_trainer.set_learning_rate(m_learningRate);
 	seg_trainer.set_synchronization_file(synchronization_file_name, std::chrono::minutes(10));
 
+	#ifdef DEBUG
 	std::cout << seg_trainer << std::endl;
-
+	#endif
 	std::vector<dlib::matrix<unsigned char>> samples;
 	std::vector<dlib::matrix<float>> labels;
 
@@ -776,7 +782,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 				labels.push_back(std::move(temp.label_image));
 			}
 			seg_trainer.train_one_step(samples, labels);
-			if(counter >= 10000)
+			if(counter >= 20000)
 			{
 				break;
 			}
@@ -791,7 +797,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		seg_net.clean();
 		throw;
 	}
-	Logger->debug("stop_data_loaders()!");
+	Logger->debug("stop_data_loaders() get_average_loss:{}, get_average_test_loss:{}", seg_trainer.get_average_loss(), seg_trainer.get_average_test_loss());
 	// Training done, tell threads to stop and make sure to wait for them to finish before moving on.
 	stop_data_loaders();
 	// also wait for threaded processing to stop in the trainer.

@@ -1,15 +1,15 @@
 {
 	"General":
 	{
-		"LogLevel": 1,
+		"LogLevel": 2,
 		"ThreadsMax": 10,
 		"Standalone": false
 	},
 	"Dlib":
 	{
 		"MinibatchSize": 40,
-		"ImageSize": 100,
-		"Queqe": 100,
+		"ImageSize": 200,
+		"Queqe": 50,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
 		"UseTwoCUDA" :  false,
