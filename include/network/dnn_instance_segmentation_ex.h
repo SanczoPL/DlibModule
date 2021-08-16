@@ -184,8 +184,8 @@ using net_type2 = dlib::loss_binary_log_per_pixel <          //1
     
 using net_type = dlib::loss_binary_log_per_pixel <          //1
     dlib::con < 1, 1, 1, 1, 1,                             //1
-    
-    dlib::relu<dlib::con<50, 5, 5, 1, 1,
+    dlib::relu<dlib::con<20, 5, 5, 1, 1,
+    dlib::relu<dlib::con<20, 5, 5, 1, 1,
     dlib::input<dlib::matrix<unsigned char>>                //0
     >>>>;
 

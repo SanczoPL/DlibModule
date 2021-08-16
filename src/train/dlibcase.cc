@@ -767,7 +767,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		// We will run until the learning rate has dropped by a factor of 1e-4.
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
 		int counter{0};
-		while (seg_trainer.get_learning_rate() >= 0.000001)
+		while (seg_trainer.get_learning_rate() >= 0.00000001)
 		{
 			m_currentLearningRate = seg_trainer.get_learning_rate();
 			counter++;
