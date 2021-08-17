@@ -98,8 +98,9 @@ public slots:
 private:
 	QString m_graphType{};
 	QString m_boundsType{};
-	QString m_logsFolder;
-	QString m_split;
+	QString m_logsFolder{};
+	QString m_videoLogsFolder{};
+	QString m_split{};
 	bool m_validTask{};
 	
 };

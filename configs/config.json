@@ -8,7 +8,7 @@
 	"Dlib":
 	{
 		"MinibatchSize": 40,
-		"ImageSize": 200,
+		"ImageSize": 400,
 		"Queqe": 50,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
@@ -29,13 +29,15 @@
 		"Dataset": "/home/matczak/repo/Optimization/DlibModule/configs/dataset.json",
 		"Preprocess": "/home/matczak/repo/Optimization/DlibModule/configs/preprocess.json",
 		"Postprocess": "/home/matczak/repo/Optimization/DlibModule/configs/postprocess.json",
-		"LogsFolder" : "/home/matczak/repo/logs/"
+		"LogsFolder" : "/home/matczak/repo/logs/",
+		"VideoLogsFolder" : "home/matczak/repo/video_logs"
 	},
 	"ConfigWin": 
 	{
 		"Dataset": "E:\\repo\\Optimization\\DlibModule\\configs\\dataset.json",
 		"Preprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\preprocess.json",
 		"Postprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
-		"LogsFolder" : "E:\\repo\\logs\\"
+		"LogsFolder" : "E:\\repo\\logs\\",
+		"VideoLogsFolder" : "E:\\repo\\video_logs\\"
 	}
 }

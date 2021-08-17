@@ -103,6 +103,7 @@ class DlibCase : public QObject {
 		double m_bestChangeLast{};
 		double m_delta{};
 		double m_currentLearningRate{};
+		double m_averageLoss{};
 
 		FileLogger *m_fileLoggerTrain;
 		FileLogger *m_fileLoggerTest;
@@ -115,6 +116,7 @@ class DlibCase : public QObject {
 		QString m_boundsType{};
 		QString m_dronType{};
 		QString m_logsFolder{};
+		QString m_videoLogsFolder{};
 		QString m_resultsPath{};
 		QString m_split{};
 
@@ -131,6 +133,7 @@ class DlibCase : public QObject {
 		QString m_inputType{};
 		QString m_outputType{};
 		QString m_logsFolderTestCase{};
+		QString m_infoName{};
 };
 
 #endif // TRAIN_DLIB_CASE_H

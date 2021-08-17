@@ -20,6 +20,7 @@ constexpr auto DRON_RAND_SEED{ "RandSeed" };
 constexpr auto DRON_CONTRAST{ "Contrast" };
 
 constexpr auto LOGS_FOLDER{ "LogsFolder" };
+constexpr auto VIDEO_LOGS_FOLDER{ "VideoLogsFolder" };
 constexpr auto CONFIG_LINUX{ "ConfigLinux" };
 constexpr auto CONFIG_WIN{ "ConfigWin" };
 
@@ -81,31 +82,29 @@ void MainLoop::loadConfigs(QJsonObject configPaths, QString graphType)
 	#endif
 }
 
+
 void MainLoop::createConfig(QJsonObject const& a_config)
 {
 	QTime now = QTime::currentTime();
     int randNumber = now.msecsSinceStartOfDay();
 
 	QString logsFolder = m_logsFolder;
-	if(checkAndCreateFolder(logsFolder))
-	{
-		Logger->error("checkAndCreateFolder cant create:{}", logsFolder.toStdString());
-	}
+	QString videoLogsFolder = m_videoLogsFolder;
+	checkAndCreateFolder(logsFolder);
+	checkAndCreateFolder(videoLogsFolder);
+
 	for (int graf = 0 ; graf < m_graphTypes.size() ; graf++)
 	{
 		QString logsFolderWithGraph = logsFolder +  m_graphTypes[graf].toString() + m_split; 
-
-		if(checkAndCreateFolder(logsFolderWithGraph))
-		{
-			Logger->error("checkAndCreateFolder cant create:{}", logsFolderWithGraph.toStdString());
-		}
+		QString videoLogsFolderWithGraph = videoLogsFolder +  m_graphTypes[graf].toString() + m_split;
+		checkAndCreateFolder(logsFolderWithGraph);
+		checkAndCreateFolder(videoLogsFolderWithGraph);
 		for (int dron = 0 ; dron < m_dronTypes.size() ; dron++)
 		{
-			QString logsFolderWithGraphAndDron = logsFolderWithGraph + m_dronTypes[dron].toString() + m_split; 
-			if(checkAndCreateFolder(logsFolderWithGraphAndDron))
-			{
-				Logger->error("checkAndCreateFolder cant create:{}", logsFolderWithGraphAndDron.toStdString());
-			}
+			QString logsFolderWithGraphAndDron = logsFolderWithGraph + m_dronTypes[dron].toString() + m_split;
+			QString videoLogsFolderWithGraphAndDron = videoLogsFolderWithGraph + m_dronTypes[dron].toString() + m_split;
+			checkAndCreateFolder(logsFolderWithGraphAndDron);
+			checkAndCreateFolder(videoLogsFolderWithGraphAndDron);
 			// Add graph type to config:
 			QJsonObject obj = m_config[DLIB].toObject();
 			obj[GRAPH_TYPE] = m_graphTypes[graf].toString();
@@ -241,6 +240,7 @@ void MainLoop::configure(QJsonObject const& a_config)
 	#endif
 
 	m_logsFolder = m_configPaths[LOGS_FOLDER].toString();
+	m_videoLogsFolder = m_configPaths[VIDEO_LOGS_FOLDER].toString();
 	m_graphTypes = a_config[DLIB].toObject()[GRAPH_TYPES].toArray();
 	m_dronTypes = a_config[DLIB].toObject()[DRON_TYPES].toArray();
 }

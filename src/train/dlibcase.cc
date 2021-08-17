@@ -35,6 +35,7 @@ constexpr auto DRON_RAND_SEED{ "RandSeed" };
 constexpr auto DRON_CONTRAST{ "Contrast" };
 
 constexpr auto LOGS_FOLDER{ "LogsFolder" };
+constexpr auto VIDEO_LOGS_FOLDER{ "VideoLogsFolder" };
 constexpr auto CONFIG_LINUX{ "ConfigLinux" };
 constexpr auto CONFIG_WIN{ "ConfigWin" };
 
@@ -86,6 +87,7 @@ DlibCase::DlibCase(DataMemory* data, FileLogger *fileLoggerTrain, FileLogger *fi
 , m_fileLoggerJSON(fileLoggerJSON)
 , m_useTwoCuda(false)
 , m_currentLearningRate(0.01)
+, m_averageLoss(0.1)
 {
 	#ifdef DEBUG
 	Logger->debug("DlibCase::DlibCase()");
@@ -129,6 +131,7 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
     #endif // __linux__
 
 	m_logsFolder = configPaths[LOGS_FOLDER].toString();
+	m_videoLogsFolder = configPaths[VIDEO_LOGS_FOLDER].toString();
 
 	m_logsFolderTestCase = m_logsFolder + m_graphType + m_split + m_dronType + m_split;
 	#ifdef DEBUG
@@ -213,10 +216,14 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	m_fileLoggerTest->onConfigure(m_fileName + ".txt");
 	m_fileName = m_logsFolderTestCase + "best" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	m_fileLoggerJSON->onConfigure(m_fileName + ".json");
-
+	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
+	// for video files:
+	m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split +
+	 "mp4" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+
 	if (!m_dataMemory->loadNamesOfFile())
 	{
 		return;
@@ -336,7 +343,7 @@ void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt,
 			QJsonObject obj = m_postprocess[i].toObject();
 			QJsonObject config = obj[CONFIG].toObject();
 
-			config["Path"] = m_fileName + "_" + "test";
+			config["Path"] = m_fileName;
 			obj[CONFIG] = config;
 			m_postprocess[i] = obj;
 		}
@@ -399,11 +406,12 @@ void DlibCase::logPopulation(QString id, fitness fs, FileLogger * fileLogger)
 {
 	m_timer.stop();
 	Logger->info(
-		"ID:{} B:{:f} (fn:{},fp:{},tn:{},tp:{}) time:{:3.0f}[ms] ",
+		"ID:{} B:{:f} (fn:{},fp:{},tn:{},tp:{}) time:{:3.0f}[ms] loss:{:f}",
 		id.toStdString(), fs.fitness,
 		fs.fn, fs.fp,
 		fs.tn, fs.tp,
-		m_timer.getTimeMilli());
+		m_timer.getTimeMilli(),
+		m_averageLoss);
 
 	QStringList list;
 	list.push_back(id + " ");
@@ -414,6 +422,7 @@ void DlibCase::logPopulation(QString id, fitness fs, FileLogger * fileLogger)
 	list.push_back(QString::number(fs.tn) + " ");
 	list.push_back(QString::number(fs.tp) + " ");
 	list.push_back(QString().setNum(m_timer.getTimeMilli(), 'f', 0) + " ");
+	list.push_back(QString::number(m_averageLoss));
 	list.push_back("\n");
 	fileLogger->onAppendFileLogger(list);
 	m_timer.start();
@@ -577,7 +586,10 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	Logger->debug("DlibCase::train_segmentation_network()");
 	Logger->debug("truth_images.size:{}", truth_images.size());
 	#endif
-	
+
+	std::ofstream out(m_infoName.toStdString()+".txt");
+	out << "seg_net:\n" << seg_net<< std::endl;
+	out.close();
 	std::cout << "seg_net:" << seg_net << std::endl;
 
 	int imageSize = m_imageSize;
@@ -797,6 +809,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		seg_net.clean();
 		throw;
 	}
+	m_averageLoss = seg_trainer.get_average_loss();
 	Logger->debug("stop_data_loaders() get_average_loss:{}, get_average_test_loss:{}", seg_trainer.get_average_loss(), seg_trainer.get_average_test_loss());
 	// Training done, tell threads to stop and make sure to wait for them to finish before moving on.
 	stop_data_loaders();
