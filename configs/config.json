@@ -30,7 +30,7 @@
 		"Preprocess": "/home/matczak/repo/Optimization/DlibModule/configs/preprocess.json",
 		"Postprocess": "/home/matczak/repo/Optimization/DlibModule/configs/postprocess.json",
 		"LogsFolder" : "/home/matczak/repo/logs/",
-		"VideoLogsFolder" : "home/matczak/repo/video_logs"
+		"VideoLogsFolder" : "/home/matczak/repo/video_logs/"
 	},
 	"ConfigWin": 
 	{
