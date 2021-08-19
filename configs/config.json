@@ -8,7 +8,7 @@
 	"Dlib":
 	{
 		"MinibatchSize": 40,
-		"ImageSize": 400,
+		"ImageSize": 100,
 		"Queqe": 50,
 		"DnnName" : "dnn",
 		"SynchName": "temp",

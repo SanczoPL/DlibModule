@@ -74,7 +74,7 @@ set(SRC_MAIN_TRAIN src/maintrain.cc)
 set(SRC_MAIN_TEST src/maintest.cc)
 
 set(SRC_NETWORK
-	include/network/dnn_instance_segmentation_ex.h
+	include/network/dnn_instance.h
 	include/network/structures.h
 )
 

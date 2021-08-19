@@ -2,7 +2,7 @@
 
 #include "configreader.h"
 #include "includespdlog.h"
-#include "network/dnn_instance_segmentation_ex.h"
+#include "network/dnn_instance.h"
 
 #include "train/mainloop.h"
 #include "data.h"

@@ -1,5 +1,5 @@
 #include "train/dlibcase.h"
-#include "network/dnn_instance_segmentation_ex.h"
+#include "network/dnn_instance.h"
 
 #include <dlib/dnn.h>
 #include <dlib/data_io.h>
@@ -88,6 +88,7 @@ DlibCase::DlibCase(DataMemory* data, FileLogger *fileLoggerTrain, FileLogger *fi
 , m_useTwoCuda(false)
 , m_currentLearningRate(0.01)
 , m_averageLoss(0.1)
+, m_epoch_counter(0)
 {
 	#ifdef DEBUG
 	Logger->debug("DlibCase::DlibCase()");
@@ -284,6 +285,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	dlib::set_dnn_prefer_smallest_algorithms();
 
 	net_type segb;
+	m_epoch_counter = 0;
 	for(int i = 0 ; i < 2 ; i++)
 	{
 		segb = this->train_segmentation_network(list);
@@ -407,16 +409,16 @@ void DlibCase::logPopulation(QString id, fitness fs, FileLogger * fileLogger)
 	m_timer.stop();
 	Logger->info(
 		"ID:{} B:{:f} (fn:{},fp:{},tn:{},tp:{}) time:{:3.0f}[ms] loss:{:f}",
-		id.toStdString(), fs.fitness,
+		m_epoch_counter,
+		fs.fitness,
 		fs.fn, fs.fp,
 		fs.tn, fs.tp,
 		m_timer.getTimeMilli(),
 		m_averageLoss);
 
 	QStringList list;
-	list.push_back(id + " ");
+	list.push_back(QString::number(m_epoch_counter) + " ");
 	list.push_back(QString().setNum(fs.fitness, 'f', 4) + " ");
-
 	list.push_back(QString::number(fs.fn) + " ");
 	list.push_back(QString::number(fs.fp) + " ");
 	list.push_back(QString::number(fs.tn) + " ");
@@ -573,14 +575,15 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	net_type seg_net;
 
 	#ifdef DEBUG
-	std::cout << "The net has " << seg_net.num_layers << " layers in it." << endl;
-	//std::cout << "seg_net:" << seg_net << std::endl;
+		std::cout << "The net has " << seg_net.num_layers << " layers in it." << std::endl;
+		std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
-	//dlib::layer<6>(seg_net).layer_details() = dlib::dropout_(0.9);
-	//dlib::layer<9>(seg_net).layer_details() = dlib::dropout_(0.9);
-	//dlib::layer<10>(seg_net).layer_details() = dlib::dropout_(0.9);
-
+	#ifdef STANDARD_NET_DROPOUT_09
+		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
+		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
+	#endif
+	
 	#ifdef DEBUG
 	std::cout << "seg_net:" << seg_net << std::endl;
 	Logger->debug("DlibCase::train_segmentation_network()");
@@ -588,6 +591,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	#endif
 
 	std::ofstream out(m_infoName.toStdString()+".txt");
+	out << "The net has " << seg_net.num_layers << " layers in it." << std::endl;
 	out << "seg_net:\n" << seg_net<< std::endl;
 	out.close();
 	std::cout << "seg_net:" << seg_net << std::endl;
@@ -778,11 +782,11 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		// The main training loop.  Keep making mini-batches and giving them to the trainer.
 		// We will run until the learning rate has dropped by a factor of 1e-4.
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
-		int counter{0};
+		
 		while (seg_trainer.get_learning_rate() >= 0.00000001)
 		{
 			m_currentLearningRate = seg_trainer.get_learning_rate();
-			counter++;
+			m_epoch_counter++;
 			samples.clear();
 			labels.clear();
 			// make a mini-batch
@@ -794,7 +798,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 				labels.push_back(std::move(temp.label_image));
 			}
 			seg_trainer.train_one_step(samples, labels);
-			if(counter >= 20000)
+			if(m_epoch_counter >= 20000)
 			{
 				break;
 			}

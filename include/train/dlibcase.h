@@ -17,7 +17,7 @@
 #include "includespdlog.h"
 #include "configreader.h"
 #include "filelogger.h"
-#include "network/dnn_instance_segmentation_ex.h"
+#include "network/dnn_instance.h"
 
 #include <dlib/dnn.h>
 #include <dlib/data_io.h>
@@ -104,6 +104,7 @@ class DlibCase : public QObject {
 		double m_delta{};
 		double m_currentLearningRate{};
 		double m_averageLoss{};
+		int m_epoch_counter{};
 
 		FileLogger *m_fileLoggerTrain;
 		FileLogger *m_fileLoggerTest;
