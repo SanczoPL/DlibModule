@@ -7,6 +7,7 @@ constexpr auto GENERAL{ "General" };
 constexpr auto DLIB{ "Dlib" };
 constexpr auto GRAPH_TYPE{ "GraphType" };
 constexpr auto BOUNDS_TYPE{ "BoundsType" };
+constexpr auto BOUND_TYPE{ "BoundType" };
 constexpr auto DRON_TYPE{ "DronType" };
 constexpr auto GRAPH_TYPES{ "GraphTypes" };
 constexpr auto BOUNDS_TYPES{ "BoundsTypes" };
@@ -64,21 +65,27 @@ void MainLoop::readConfig(QString configName, QJsonArray& jArray, QString graphT
 	delete configReader;
 }
 
-void MainLoop::loadConfigs(QJsonObject configPaths, QString graphType)
+void MainLoop::loadConfigs(QJsonObject configPaths, QString graphType, QString boundsType)
 {
 	#ifdef DEBUG_CONFIG
     Logger->debug("MainLoop::loadConfigs() with specific graph type:{}", graphType.toStdString());
 	#endif
 
+	m_dlibConfigName.bounds = configPaths["Bounds"].toString();
 	m_dlibConfigName.dataset = configPaths["Dataset"].toString();
 	m_dlibConfigName.preprocess = configPaths["Preprocess"].toString();
 	m_dlibConfigName.postprocess = configPaths["Postprocess"].toString();
 
 	MainLoop::readConfig(m_dlibConfigName.dataset, m_dlibConfig.dataset, graphType);
+	MainLoop::readConfig(m_dlibConfigName.bounds, m_dlibConfig.bounds, graphType);
 	MainLoop::readConfig(m_dlibConfigName.preprocess, m_dlibConfig.preprocess, graphType);
 	MainLoop::readConfig(m_dlibConfigName.postprocess, m_dlibConfig.postprocess, graphType);
+
+	m_dlibConfig.bounds = m_dlibConfig.bounds[boundsType].toObject();
+
 	#ifdef DEBUG_CONFIG
 		qDebug() << "MainLoop::loadConfigs() m_dlibConfig.dataset:" << m_dlibConfig.dataset;
+		qDebug() << "MainLoop::loadConfigs() m_dlibConfig.bounds:" << m_dlibConfig.bounds;
 	#endif
 }
 
@@ -105,50 +112,60 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 			QString videoLogsFolderWithGraphAndDron = videoLogsFolderWithGraph + m_dronTypes[dron].toString() + m_split;
 			checkAndCreateFolder(logsFolderWithGraphAndDron);
 			checkAndCreateFolder(videoLogsFolderWithGraphAndDron);
-			// Add graph type to config:
-			QJsonObject obj = m_config[DLIB].toObject();
-			obj[GRAPH_TYPE] = m_graphTypes[graf].toString();
-			obj[DRON_TYPE] = m_dronTypes[dron].toString();
-			m_config[DLIB] = obj;
-			m_dlibConfig.config = m_config;
 
-			// Load rest of configs:
-			MainLoop::loadConfigs(m_configPaths, m_graphTypes[graf].toString());
-
-			// Add noise:
-			for (int i = 0; i < 101; i += 5)
+			for (int bound = 0 ; bound < m_boundsTypes.size() ; bound++)
 			{
-				for(int j = 0 ; j < m_dlibConfig.preprocess.size() ; j++)
+				QString logsFolderWithGraphAndDronAndBound = logsFolderWithGraphAndDron + m_boundsTypes[bound].toString() + m_split;
+				QString videoLogsFolderWithGraphAndDronAndBound = videoLogsFolderWithGraphAndDron + m_boundsTypes[bound].toString() + m_split;
+				checkAndCreateFolder(logsFolderWithGraphAndDronAndBound);
+				checkAndCreateFolder(videoLogsFolderWithGraphAndDronAndBound);
+
+				// Add graph type to config:
+				QJsonObject obj = m_config[DLIB].toObject();
+				obj[GRAPH_TYPE] = m_graphTypes[graf].toString();
+				obj[BOUND_TYPE] = m_boundsTypes[bound].toString();
+				obj[DRON_TYPE] = m_dronTypes[dron].toString();
+				m_config[DLIB] = obj;
+				m_dlibConfig.config = m_config;
+
+				// Load rest of configs:
+				MainLoop::loadConfigs(m_configPaths, m_graphTypes[graf].toString(), m_boundsTypes[bound].toString());
+				
+				// Add noise:
+				for (int i = 0; i < 101; i += 5)
 				{
-					if(m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject()[NAME].toString() == "AddMultipleDron")
+					for(int j = 0 ; j < m_dlibConfig.preprocess.size() ; j++)
 					{
-						randNumber++;
-						QJsonArray arrObj = m_dlibConfig.preprocess;
-						QJsonObject obj = arrObj[j].toObject();
-						QJsonObject config = obj[CONFIG].toObject();
-						config[DRON_RAND_SEED] = randNumber;
-						config[DRON_TYPE] = m_dronTypes[dron].toString();
+						if(m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject()[NAME].toString() == "AddMultipleDron")
+						{
+							randNumber++;
+							QJsonArray arrObj = m_dlibConfig.preprocess;
+							QJsonObject obj = arrObj[j].toObject();
+							QJsonObject config = obj[CONFIG].toObject();
+							config[DRON_RAND_SEED] = randNumber;
+							config[DRON_TYPE] = m_dronTypes[dron].toString();
 
-						config[DRON_NOISE_START] = double(i);
-						config[DRON_NOISE_STOP] = double(i + 0.1);
-						config[DRON_NOISE_DELTA] = double(0.01);
+							config[DRON_NOISE_START] = double(i);
+							config[DRON_NOISE_STOP] = double(i + 0.1);
+							config[DRON_NOISE_DELTA] = double(0.01);
 
-						config[DRON_CONTRAST_START] = 100.00;
-						config[DRON_CONTRAST_STOP] = 100.1;
-						config[DRON_CONTRAST_DELTA] = 0.01;
+							config[DRON_CONTRAST_START] = 100.00;
+							config[DRON_CONTRAST_STOP] = 100.1;
+							config[DRON_CONTRAST_DELTA] = 0.01;
 
-						obj[CONFIG] = config;
-						arrObj[j] = obj;
-						m_dlibConfig.preprocess = arrObj;
-						#ifdef DEBUG_CONFIG
-						qDebug() << "config[DRON_NOISE_START]:" << config[DRON_NOISE_START];
-						qDebug() << "config[DRON_NOISE_STOP]:" << config[DRON_NOISE_STOP];
-						qDebug() << "config[DRON_NOISE_DELTA]:" << config[DRON_NOISE_DELTA];
-						qDebug() << "m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject():" << m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject();
-						#endif
+							obj[CONFIG] = config;
+							arrObj[j] = obj;
+							m_dlibConfig.preprocess = arrObj;
+							#ifdef DEBUG_CONFIG
+							qDebug() << "config[DRON_NOISE_START]:" << config[DRON_NOISE_START];
+							qDebug() << "config[DRON_NOISE_STOP]:" << config[DRON_NOISE_STOP];
+							qDebug() << "config[DRON_NOISE_DELTA]:" << config[DRON_NOISE_DELTA];
+							qDebug() << "m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject():" << m_dlibConfig.preprocess[j].toObject()[CONFIG].toObject();
+							#endif
+						}
 					}
+					m_dlibConfigs.push_back(m_dlibConfig);
 				}
-				m_dlibConfigs.push_back(m_dlibConfig);
 			}
 		}
 	}
@@ -242,6 +259,7 @@ void MainLoop::configure(QJsonObject const& a_config)
 	m_logsFolder = m_configPaths[LOGS_FOLDER].toString();
 	m_videoLogsFolder = m_configPaths[VIDEO_LOGS_FOLDER].toString();
 	m_graphTypes = a_config[DLIB].toObject()[GRAPH_TYPES].toArray();
+	m_boundsTypes = a_config[DLIB].toObject()[BOUNDS_TYPES].toArray();
 	m_dronTypes = a_config[DLIB].toObject()[DRON_TYPES].toArray();
 }
 

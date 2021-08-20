@@ -24,9 +24,11 @@ struct configsName
 	QString dataset;
 	QString preprocess;
 	QString postprocess;
+	QString bounds;
 };
 struct configs
 {
+	QJsonObject bounds;
 	QJsonObject dataset;
 	QJsonArray preprocess;
 	QJsonArray postprocess;
@@ -43,7 +45,7 @@ public:
 private:
 	void readConfig(QString configName, QJsonObject& jObject, QString graphType);
 	void readConfig(QString configName, QJsonArray& jArray, QString graphType);
-	void loadConfigs(QJsonObject configPaths, QString graphType);
+	void loadConfigs(QJsonObject configPaths, QString graphType, QString boundsType);
 
 private:
 	void createConfig(QJsonObject const& a_config);
@@ -68,7 +70,7 @@ private:
 	QJsonObject m_dataset;
 	QJsonObject m_preprocess;
 	QJsonObject m_configPaths;
-
+	QJsonArray m_boundsTypes;
 	QJsonArray m_graphTypes;
 	QJsonArray m_dronTypes;
 

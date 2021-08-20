@@ -114,7 +114,7 @@ class DlibCase : public QObject {
 
 		QString m_fileName{};
 		QString m_graphType{};
-		QString m_boundsType{};
+		QString m_boundType{};
 		QString m_dronType{};
 		QString m_logsFolder{};
 		QString m_videoLogsFolder{};

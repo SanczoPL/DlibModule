@@ -24,7 +24,7 @@ constexpr auto GENETIC{ "Genetic" };
 constexpr auto DLIB{ "Dlib" };
 constexpr auto GRAPH_TYPE{ "GraphType" };
 constexpr auto DRON_TYPE{ "DronType" };
-constexpr auto DRON_TYPES{ "DronTypes" };
+constexpr auto BOUND_TYPE{ "BoundType" };
 constexpr auto RESULTS_PATH{"ResultsPath"};
 constexpr auto RESULTS{"Results"};
 
@@ -114,6 +114,32 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 
 	m_graphType = dlibConfig[GRAPH_TYPE].toString();
 	m_dronType = dlibConfig[DRON_TYPE].toString();
+	m_boundType = dlibConfig[BOUND_TYPE].toString();
+
+	#ifdef DNN_1LAYER
+		m_boundType = "Dnn_1Layer";
+	#endif
+
+	#ifdef DNN_1LAYER_DROPOUT_05
+		m_boundType = "Dnn_1Layer_droput05";
+	#endif
+
+	#ifdef DNN_1LAYER_DROPOUT_09
+		m_boundType = "Dnn_1Layer_droput09";
+	#endif
+
+	#ifdef DNN_2LAYERS
+		m_boundType = "Dnn_2Layer";
+	#endif
+
+	#ifdef DNN_2LAYERS_DROPOUT_05
+		m_boundType = "Dnn_2Layer_droput05";
+	#endif
+
+	#ifdef DNN_2LAYERS_DROPOUT_09
+		m_boundType = "Dnn_2Layer_droput09";
+	#endif
+
 	m_maxNumEpochs = dlibConfig[MAX_NUM_EPOCHS].toInt();
 	m_minBatchSize = dlibConfig[MIN_BATCH_SIZE].toInt();
 	m_imageSize = dlibConfig[IMAGE_SIZE].toInt();
@@ -134,7 +160,7 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 	m_logsFolder = configPaths[LOGS_FOLDER].toString();
 	m_videoLogsFolder = configPaths[VIDEO_LOGS_FOLDER].toString();
 
-	m_logsFolderTestCase = m_logsFolder + m_graphType + m_split + m_dronType + m_split;
+	m_logsFolderTestCase = m_logsFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split;
 	#ifdef DEBUG
 	Logger->info("Dlib::configure() mini-batch size:{}", m_minBatchSize);
 	#endif
@@ -211,19 +237,21 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	
 	qint64 _nowTime = qint64(QDateTime::currentMSecsSinceEpoch());
 	
-	m_fileName = m_logsFolderTestCase + "train" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileName = m_logsFolderTestCase + "train" + "_" + QString::number(m_dronNoise) + "_" + 
+			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	m_fileLoggerTrain->onConfigure(m_fileName + ".txt");
-	m_fileName = m_logsFolderTestCase + "test" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileName = m_logsFolderTestCase + "test" + "_" + QString::number(m_dronNoise) + "_" +
+			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	m_fileLoggerTest->onConfigure(m_fileName + ".txt");
-	m_fileName = m_logsFolderTestCase + "best" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_fileName = m_logsFolderTestCase + "config" + "_" + QString::number(m_dronNoise) + "_" +
+			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	m_fileLoggerJSON->onConfigure(m_fileName + ".json");
-	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" +
+			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
-	// for video files:
-	m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split +
-	 "mp4" + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+	
 
 	if (!m_dataMemory->loadNamesOfFile())
 	{
@@ -293,7 +321,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		net_type segc;
 		dlib::deserialize(m_outputNetworkFileName.toStdString()) >> segc;
 		
-		DlibCase::testNetwork("Test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
+		DlibCase::testNetwork("test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
 		if (m_currentLearningRate <= 0.00001)
 		{
 			break;
@@ -304,7 +332,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		}
 	}
 
-	DlibCase::testNetwork("Train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
+	DlibCase::testNetwork("train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
 	
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() test network... ok");
@@ -344,7 +372,9 @@ void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt,
 		{
 			QJsonObject obj = m_postprocess[i].toObject();
 			QJsonObject config = obj[CONFIG].toObject();
-
+			// for video files:
+			m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split +
+			id + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
 			config["Path"] = m_fileName;
 			obj[CONFIG] = config;
 			m_postprocess[i] = obj;
@@ -579,7 +609,11 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
-	#ifdef STANDARD_NET_DROPOUT_09
+	#ifdef DNN_1LAYER_DROPOUT_09
+		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
+	#endif
+
+	#ifdef STANDARD_2LAYERS_DROPOUT_09
 		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
 		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
 	#endif
@@ -590,11 +624,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	Logger->debug("truth_images.size:{}", truth_images.size());
 	#endif
 
-	std::ofstream out(m_infoName.toStdString()+".txt");
-	out << "The net has " << seg_net.num_layers << " layers in it." << std::endl;
-	out << "seg_net:\n" << seg_net<< std::endl;
-	out.close();
-	std::cout << "seg_net:" << seg_net << std::endl;
+	
 
 	int imageSize = m_imageSize;
 	const std::string synchronization_file_name = m_synchronizationNetworkFileName.toStdString();
@@ -621,16 +651,27 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	#endif
 
 	seg_trainer.set_learning_rate_shrink_factor(0.1);
-	seg_trainer.set_iterations_without_progress_threshold(500);
+	seg_trainer.set_iterations_without_progress_threshold(700);
 	seg_trainer.set_mini_batch_size(m_minBatchSize);
 	seg_trainer.set_max_num_epochs(m_maxNumEpochs);
 	seg_trainer.be_verbose();
 	seg_trainer.set_learning_rate(m_learningRate);
-	seg_trainer.set_synchronization_file(synchronization_file_name, std::chrono::minutes(10));
+	//seg_trainer.set_synchronization_file(synchronization_file_name, std::chrono::minutes(10));
 
 	#ifdef DEBUG
 	std::cout << seg_trainer << std::endl;
+	std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
+
+	std::ofstream out(m_infoName.toStdString()+".txt");
+	out << "The net has " << seg_net.num_layers << " layers in it." << std::endl;
+	out << "seg_net:\n" << seg_net<< std::endl;
+	out << "seg_trainer:\n" << seg_trainer << std::endl;
+	out.close();
+
+	QJsonObject json{{"Config", m_config[DLIB].toObject()}};
+	m_fileLoggerJSON->onLogJsonBest(json);
+
 	std::vector<dlib::matrix<unsigned char>> samples;
 	std::vector<dlib::matrix<float>> labels;
 

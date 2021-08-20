@@ -10,21 +10,15 @@
 #include <thread>
 #include "network/structures.h"
 
-//#define STANDARD_NET
-#define STANDARD_NET_DROPOUT_05
-//#define STANDARD_NET_DROPOUT_09
+#define DNN_1LAYER
+//#DNN_1LAYER_DROPOUT_05
+//#DNN_1LAYER_DROPOUT_09
 
-using net_type_not_used = dlib::loss_binary_log_per_pixel <          //1
-	dlib::cont < 1, 1, 1, 1, 1,                             //1
-	dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //3
-	dlib::relu<dlib::con<100, 5, 5, 1, 1,dlib::dropout<      //3
-	dlib::relu<dlib::con<150, 5, 5, 1, 1,dlib::dropout<      //3
-	dlib::relu<dlib::con<100, 5, 5, 1, 1,dlib::dropout<      //2
-	dlib::relu<dlib::con<50, 5, 5, 1, 1,dlib::dropout<      //3
-	dlib::input<dlib::matrix<unsigned char>>                //0
-	>>>>>>>>>>>>>>>>>;                                      //11
+//#define DNN_2LAYERS
+//#DNN_2LAYERS_DROPOUT_05
+//#DNN_2LAYERS_DROPOUT_09
 
-#ifdef STANDARD_NET
+#ifdef DNN_1LAYER
 using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::con < 1, 1, 1, 1, 1,                              //1
 	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
@@ -32,7 +26,7 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	>>>>;                                                 //4
 #endif
 
-#ifdef STANDARD_NET_DROPOUT_05
+#ifdef DNN_1LAYER_DROPOUT_05
 using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::con < 1, 1, 1, 1, 1,                              //1
 	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
@@ -40,12 +34,40 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	>>>>>;                                               //5
 #endif
 
-#ifdef STANDARD_NET_DROPOUT_09
+#ifdef DNN_1LAYER_DROPOUT_09
 using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::con < 1, 1, 1, 1, 1,                              //1
 	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>>;                                               //5
+#endif
+
+
+#ifdef DNN_2LAYERS
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con < 1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>;                                                 //6
+#endif
+
+#ifdef DNN_2LAYERS_DROPOUT_05
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con < 1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
+	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>>>;                                               //8
+#endif
+
+#ifdef DNN_2LAYERS_DROPOUT_09
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con < 1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
+	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>>>;                                               //8
 #endif
 
 // A single training sample for segmentation. A mini-batch comprises many of these.

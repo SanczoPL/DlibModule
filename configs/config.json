@@ -7,18 +7,20 @@
 	},
 	"Dlib":
 	{
-		"MinibatchSize": 40,
+		"MinibatchSize": 100,
 		"ImageSize": 100,
 		"Queqe": 50,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
 		"UseTwoCUDA" :  false,
 		"LearningRate" : 0.1,
-		"DronType" : "BLACK_WHITE",
-		"GraphType":"Graph_dlib",
+		"DronType" : "",
+		"GraphType":"",
+		"BoundsType" : "",
 		"DronTypes_ALL" : [ "BLACK", "WHITE","BLACK_WHITE"],
 		"DronTypes" : [ "BLACK_WHITE", "WHITE","BLACK"],
 		"GraphTypes":["Graph_dlib"],
+		"BoundsTypes" : [ "Dnn_2Layer"],
 		"MaxNumEpochs": 100,
 		"SynchTime": 20,
 		"momentum": 0.9,
@@ -29,6 +31,7 @@
 		"Dataset": "/home/matczak/repo/Optimization/DlibModule/configs/dataset.json",
 		"Preprocess": "/home/matczak/repo/Optimization/DlibModule/configs/preprocess.json",
 		"Postprocess": "/home/matczak/repo/Optimization/DlibModule/configs/postprocess.json",
+		"Bounds": "/home/matczak/repo/Optimization/DlibModule/configs/bounds.json",
 		"LogsFolder" : "/home/matczak/repo/logs/",
 		"VideoLogsFolder" : "/home/matczak/repo/video_logs/"
 	},
@@ -37,6 +40,7 @@
 		"Dataset": "E:\\repo\\Optimization\\DlibModule\\configs\\dataset.json",
 		"Preprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\preprocess.json",
 		"Postprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
+		"Bounds": "E:\\repo\\Optimization\\DlibModule\\configs\\bounds.json",
 		"LogsFolder" : "E:\\repo\\logs\\",
 		"VideoLogsFolder" : "E:\\repo\\video_logs\\"
 	}
