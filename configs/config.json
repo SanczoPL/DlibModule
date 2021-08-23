@@ -37,11 +37,11 @@
 	},
 	"ConfigWin": 
 	{
-		"Dataset": "E:\\repo\\Optimization\\DlibModule\\configs\\dataset.json",
-		"Preprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\preprocess.json",
-		"Postprocess": "E:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
-		"Bounds": "E:\\repo\\Optimization\\DlibModule\\configs\\bounds.json",
-		"LogsFolder" : "E:\\repo\\logs\\",
-		"VideoLogsFolder" : "E:\\repo\\video_logs\\"
+		"Dataset": "C:\\repo\\Optimization\\DlibModule\\configs\\dataset.json",
+		"Preprocess": "C:\\repo\\Optimization\\DlibModule\\configs\\preprocess.json",
+		"Postprocess": "C:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
+		"Bounds": "C:\\repo\\Optimization\\DlibModule\\configs\\bounds.json",
+		"LogsFolder" : "C:\\repo\\logs\\",
+		"VideoLogsFolder" : "C:\\repo\\video_logs\\"
 	}
 }

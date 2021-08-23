@@ -235,19 +235,19 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	DlibCase::loadDatasetName(a_dataset);
 	DlibCase::clearData();
 	
-	qint64 _nowTime = qint64(QDateTime::currentMSecsSinceEpoch());
+	m_nowTime = qint64(QDateTime::currentMSecsSinceEpoch());
 	
 	m_fileName = m_logsFolderTestCase + "train" + "_" + QString::number(m_dronNoise) + "_" + 
-			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 	m_fileLoggerTrain->onConfigure(m_fileName + ".txt");
 	m_fileName = m_logsFolderTestCase + "test" + "_" + QString::number(m_dronNoise) + "_" +
-			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 	m_fileLoggerTest->onConfigure(m_fileName + ".txt");
 	m_fileName = m_logsFolderTestCase + "config" + "_" + QString::number(m_dronNoise) + "_" +
-			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 	m_fileLoggerJSON->onConfigure(m_fileName + ".json");
 	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" +
-			QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
@@ -289,7 +289,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		list.push_back(this->load_truth_instances(listing[i]));
 	}
 	
-	m_synchronizationNetworkFileName = m_logsFolderTestCase + m_synchName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime) + ".dat";
+	m_synchronizationNetworkFileName = m_logsFolderTestCase + m_synchName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dat";
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() load_truth_instances ... ok");
@@ -304,7 +304,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	QString synch_nameNet = synch_name + "_" + QString::number(123) + ".dat";
 	bool useTwoCUDA = m_config[DLIB].toObject()["UseTwoCUDA"].toBool();
 
-	m_outputNetworkFileName = m_logsFolderTestCase + m_dnnName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime) + ".dnn";
+	m_outputNetworkFileName = m_logsFolderTestCase + m_dnnName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dnn";
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() m_outputNetworkFileName:{}", m_outputNetworkFileName.toStdString());
@@ -374,7 +374,7 @@ void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt,
 			QJsonObject config = obj[CONFIG].toObject();
 			// for video files:
 			m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split +
-			id + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(_nowTime);
+			id + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 			config["Path"] = m_fileName;
 			obj[CONFIG] = config;
 			m_postprocess[i] = obj;

@@ -135,6 +135,8 @@ class DlibCase : public QObject {
 		QString m_outputType{};
 		QString m_logsFolderTestCase{};
 		QString m_infoName{};
+
+		qint64 m_nowTime;
 };
 
 #endif // TRAIN_DLIB_CASE_H
