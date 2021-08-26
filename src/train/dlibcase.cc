@@ -140,6 +140,18 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 		m_boundType = "Dnn_2Layer_droput09";
 	#endif
 
+	#ifdef DNN_3LAYERS
+		m_boundType = "Dnn_3Layer";
+	#endif
+
+	#ifdef DNN_3LAYERS_DROPOUT_05
+		m_boundType = "Dnn_3Layer_droput05";
+	#endif
+
+	#ifdef DNN_3LAYERS_DROPOUT_09
+		m_boundType = "Dnn_3Layer_droput09";
+	#endif
+
 	m_maxNumEpochs = dlibConfig[MAX_NUM_EPOCHS].toInt();
 	m_minBatchSize = dlibConfig[MIN_BATCH_SIZE].toInt();
 	m_imageSize = dlibConfig[IMAGE_SIZE].toInt();
