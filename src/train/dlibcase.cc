@@ -144,6 +144,10 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 		m_boundType = "Dnn_2Layer_50con";
 	#endif
 
+	#ifdef DNN_2LAYERS_50CONT
+		m_boundType = "Dnn_2Layer_50cont";
+	#endif
+
 
 	#ifdef DNN_3LAYERS
 		m_boundType = "Dnn_3Layer";
@@ -265,6 +269,8 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	m_fileLoggerJSON->onConfigure(m_fileName + ".json");
 	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" +
 			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
+
+	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());		
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
