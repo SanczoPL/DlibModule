@@ -18,7 +18,9 @@
 //#define DNN_2LAYERS_DROPOUT_05
 //#define DNN_2LAYERS_DROPOUT_09
 
-#define DNN_3LAYERS
+#define DNN_2LAYERS_50CON
+
+//#define DNN_3LAYERS
 //#define DNN_2LAYERS_DROPOUT_05
 //#define DNN_2LAYERS_DROPOUT_09
 
@@ -72,6 +74,15 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::relu<dlib::con<20, 5, 5, 1, 1, dlib::dropout<     //3
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>>>>>;                                               //8
+#endif
+
+#ifdef DNN_2LAYERS_50CON
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con < 1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<50, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<50, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>;                                                 //6
 #endif
 
 #ifdef DNN_3LAYERS
