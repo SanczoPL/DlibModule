@@ -116,49 +116,36 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 	m_dronType = dlibConfig[DRON_TYPE].toString();
 	m_boundType = dlibConfig[BOUND_TYPE].toString();
 
-	#ifdef DNN_1LAYER
-		m_boundType = "Dnn_1Layer";
+
+#define DNN_2LAYERS_30CON
+//#define DNN_2LAYERS_30CON_05DROPOUT
+//#define DNN_2LAYERS_30CON_09DROPOUT
+//#define DNN_2LAYERS_30CONT
+//#define DNN_2LAYERS_30CONT_05DROPOUT
+//#define DNN_2LAYERS_30CONT_09DROPOUT
+
+	#ifdef DNN_2LAYERS_30CON
+		m_boundType = "Dnn_2Layer_30Con";
 	#endif
 
-	#ifdef DNN_1LAYER_DROPOUT_05
-		m_boundType = "Dnn_1Layer_droput05";
+	#ifdef DNN_2LAYERS_30CON_05DROPOUT
+		m_boundType = "Dnn_2Layer_30Con_05Dropout";
 	#endif
 
-	#ifdef DNN_1LAYER_DROPOUT_09
-		m_boundType = "Dnn_1Layer_droput09";
+	#ifdef DNN_2LAYERS_30CON_09DROPOUT
+		m_boundType = "Dnn_2Layer_30Con_09Dropout";
 	#endif
 
-	#ifdef DNN_2LAYERS
-		m_boundType = "Dnn_2Layer";
+	#ifdef DNN_2LAYERS_30CONT
+		m_boundType = "Dnn_2Layer_30Cont";
 	#endif
 
-	#ifdef DNN_2LAYERS_DROPOUT_05
-		m_boundType = "Dnn_2Layer_droput05";
+	#ifdef DNN_2LAYERS_30CONT_05DROPOUT
+		m_boundType = "Dnn_2Layer_30Cont_05Dropout";
 	#endif
 
-	#ifdef DNN_2LAYERS_DROPOUT_09
-		m_boundType = "Dnn_2Layer_droput09";
-	#endif
-
-	#ifdef DNN_2LAYERS_50CON
-		m_boundType = "Dnn_2Layer_50con";
-	#endif
-
-	#ifdef DNN_2LAYERS_50CONT
-		m_boundType = "Dnn_2Layer_50cont";
-	#endif
-
-
-	#ifdef DNN_3LAYERS
-		m_boundType = "Dnn_3Layer";
-	#endif
-
-	#ifdef DNN_3LAYERS_DROPOUT_05
-		m_boundType = "Dnn_3Layer_droput05";
-	#endif
-
-	#ifdef DNN_3LAYERS_DROPOUT_09
-		m_boundType = "Dnn_3Layer_droput09";
+	#ifdef DNN_2LAYERS_30CONT_09DROPOUT
+		m_boundType = "Dnn_2Layer_30Cont_09Dropout";
 	#endif
 
 	m_maxNumEpochs = dlibConfig[MAX_NUM_EPOCHS].toInt();
@@ -270,7 +257,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	m_infoName = m_logsFolderTestCase + "info" + "_" + QString::number(m_dronNoise) + "_" +
 			QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 
-	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());		
+	Logger->info("Dlib::configure() file:{}", (m_fileName).toStdString());		
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() file:{}", (m_fileName + ".txt").toStdString());
 	#endif
@@ -356,7 +343,6 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	}
 
 	DlibCase::testNetwork("train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
-	
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() test network... ok");
 	#endif
@@ -632,15 +618,16 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
-	#ifdef DNN_1LAYER_DROPOUT_09
-		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
-	#endif
-
-	#ifdef STANDARD_2LAYERS_DROPOUT_09
+	#ifdef DNN_2LAYERS_30CON_09DROPOUT
 		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
 		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
 	#endif
 	
+	#ifdef DNN_2LAYERS_30CONT_09DROPOUT
+		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
+		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
+	#endif
+
 	#ifdef DEBUG
 	std::cout << "seg_net:" << seg_net << std::endl;
 	Logger->debug("DlibCase::train_segmentation_network()");
