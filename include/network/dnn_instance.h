@@ -10,7 +10,7 @@
 #include <thread>
 #include "network/structures.h"
 
-#define DNN_2LAYERS_30CON
+//#define DNN_2LAYERS_30CON
 //#define DNN_2LAYERS_30CON_05DROPOUT
 //#define DNN_2LAYERS_30CON_09DROPOUT
 //#define DNN_2LAYERS_30CONT
