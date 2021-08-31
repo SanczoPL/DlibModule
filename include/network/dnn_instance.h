@@ -16,6 +16,7 @@
 //#define DNN_2LAYERS_30CONT
 //#define DNN_2LAYERS_30CONT_05DROPOUT
 //#define DNN_2LAYERS_30CONT_09DROPOUT
+#define DNN_2LAYERS_40CON
 
 
 #ifdef DNN_2LAYERS_30CON
@@ -26,6 +27,17 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>>>;                                                 //6
 #endif
+
+#ifdef DNN_2LAYERS_40CON
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<40, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<40, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>;                                                 //6
+#endif
+
+
 
 #ifdef DNN_2LAYERS_30CON_05DROPOUT
 using net_type = dlib::loss_binary_log_per_pixel <          //1
