@@ -386,7 +386,7 @@ void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt,
 			QJsonObject obj = m_postprocess[i].toObject();
 			QJsonObject config = obj[CONFIG].toObject();
 			// for video files:
-			m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split +
+			m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split +
 			id + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 			config["Path"] = m_fileName;
 			obj[CONFIG] = config;
