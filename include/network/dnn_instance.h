@@ -10,22 +10,21 @@
 #include <thread>
 #include "network/structures.h"
 
-#define DNN_1LAYERS_30CON
+//#define DNN_1LAYERS_20CON
 //#define DNN_1LAYERS_40CON
 
-//#define DNN_2LAYERS_30CON
-//#define DNN_2LAYERS_30CON_05DROPOUT
-//#define DNN_2LAYERS_30CON_09DROPOUT
-//#define DNN_2LAYERS_30CONT
-//#define DNN_2LAYERS_30CONT_05DROPOUT
-//#define DNN_2LAYERS_30CONT_09DROPOUT
+//#define DNN_2LAYERS_20CON
 //#define DNN_2LAYERS_40CON
 
+#define DNN_3LAYERS_20CON
+//#define DNN_3LAYERS_40CON
 
-#ifdef DNN_1LAYERS_30CON
+
+
+#ifdef DNN_1LAYERS_20CON
 using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::con<1, 1, 1, 1, 1,                              //1
-	dlib::relu<dlib::con<30, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>;                                                 //4
 #endif
@@ -39,11 +38,11 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 #endif
 
 
-#ifdef DNN_2LAYERS_30CON
+#ifdef DNN_2LAYERS_20CON
 using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::con<1, 1, 1, 1, 1,                              //1
-	dlib::relu<dlib::con<30, 5, 5, 1, 1,                    //2
-	dlib::relu<dlib::con<30, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>>>;                                                 //6
 #endif
@@ -56,6 +55,30 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	dlib::input<dlib::matrix<unsigned char>>                //0
 	>>>>>>;                                                 //6
 #endif
+
+
+#ifdef DNN_3LAYERS_20CON
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<20, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>>>;                                                 //8
+#endif
+
+#ifdef DNN_3LAYERS_40CON
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<40, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<40, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<40, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>;                                                 //8
+#endif
+
+
+
 
 
 

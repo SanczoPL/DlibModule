@@ -20,7 +20,7 @@
 		"DronTypes_ALL" : [ "BLACK", "WHITE","BLACK_WHITE"],
 		"DronTypes" : [ "BLACK_WHITE", "WHITE","BLACK"],
 		"GraphTypes":["Graph_dlib"],
-		"BoundsTypes" : [ "Dnn_2Layer_30Con", "Dnn_2Layer_30Con_05Dropout", "Dnn_2Layer_30Con_09Dropout", "Dnn_2Layer_30Cont", "Dnn_2Layer_30Cont_05Dropout", "Dnn_2Layer_30Cont_09Dropout"],
+		"BoundsTypes" : [ "Dnn_3Layer_20Con"],
 		"MaxNumEpochs": 100,
 		"SynchTime": 20,
 		"momentum": 0.9,

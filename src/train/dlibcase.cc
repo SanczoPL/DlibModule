@@ -116,21 +116,31 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 	m_dronType = dlibConfig[DRON_TYPE].toString();
 	m_boundType = dlibConfig[BOUND_TYPE].toString();
 
-	#ifdef DNN_1LAYERS_30CON
-		m_boundType = "Dnn_1Layer_30Con";
+	#ifdef DNN_1LAYERS_20CON
+		m_boundType = "Dnn_1Layer_20Con";
 	#endif
 
 	#ifdef DNN_1LAYERS_40CON
 		m_boundType = "Dnn_1Layer_40Con";
 	#endif
 
-	#ifdef DNN_2LAYERS_30CON
-		m_boundType = "Dnn_2Layer_30Con";
+	#ifdef DNN_2LAYERS_20CON
+		m_boundType = "Dnn_2Layer_20Con";
 	#endif
 
 	#ifdef DNN_2LAYERS_40CON
 		m_boundType = "Dnn_2Layer_40Con";
 	#endif
+
+
+	#ifdef DNN_3LAYERS_20CON
+		m_boundType = "Dnn_3Layer_20Con";
+	#endif
+	#ifdef DNN_3LAYERS_40CON
+		m_boundType = "Dnn_3Layer_40Con";
+	#endif
+
+
 
 	#ifdef DNN_2LAYERS_30CON_05DROPOUT
 		m_boundType = "Dnn_2Layer_30Con_05Dropout";
