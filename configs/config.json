@@ -1,7 +1,7 @@
 {
 	"General":
 	{
-		"LogLevel": 2,
+		"LogLevel": 1,
 		"ThreadsMax": 10,
 		"Standalone": false
 	},
@@ -9,10 +9,10 @@
 	{
 		"MinibatchSize": 100,
 		"ImageSize": 100,
-		"Queqe": 50,
+		"Queqe": 100,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
-		"UseTwoCUDA" :  true,
+		"UseTwoCUDA" :  false,
 		"LearningRate" : 0.1,
 		"DronType" : "",
 		"GraphType":"",
@@ -20,8 +20,8 @@
 		"DronTypes_ALL" : [ "BLACK", "WHITE","BLACK_WHITE"],
 		"DronTypes" : [ "BLACK_WHITE", "WHITE","BLACK"],
 		"GraphTypes":["Graph_dlib"],
-		"BoundsTypes" : [ "Dnn_3Layer_20Con"],
-		"MaxNumEpochs": 100,
+		"BoundsTypes" : [ "Dnn_2Layers_60Con_Multiply09"],
+		"MaxNumEpochs": 200,
 		"SynchTime": 20,
 		"momentum": 0.9,
 		"EpochsToLogging": 10
@@ -33,7 +33,8 @@
 		"Postprocess": "/home/matczak/repo/Optimization/DlibModule/configs/postprocess.json",
 		"Bounds": "/home/matczak/repo/Optimization/DlibModule/configs/bounds.json",
 		"LogsFolder" : "/home/matczak/repo/logs/",
-		"VideoLogsFolder" : "/home/matczak/repo/video_logs/"
+		"VideoLogsFolder" : "/home/matczak/repo/video_logs/",
+		"DnnFolder" : "/home/matczak/repo/temp_dnn/"
 	},
 	"ConfigWin": 
 	{
@@ -42,6 +43,7 @@
 		"Postprocess": "C:\\repo\\Optimization\\DlibModule\\configs\\postprocess.json",
 		"Bounds": "C:\\repo\\Optimization\\DlibModule\\configs\\bounds.json",
 		"LogsFolder" : "C:\\repo\\logs\\",
-		"VideoLogsFolder" : "C:\\repo\\video_logs\\"
+		"VideoLogsFolder" : "C:\\repo\\video_logs\\",
+		"DnnFolder" : "C:\\repo\\temp_dnn\\"
 	}
 }

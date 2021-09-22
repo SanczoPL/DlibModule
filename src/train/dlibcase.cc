@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 // THREADS: 1/4/8/16/32
-#define THREADS 4
+#define THREADS 8
 //#define DEBUG
 //#define DEBUG_POSTPROCESSING
 
@@ -36,6 +36,7 @@ constexpr auto DRON_CONTRAST{ "Contrast" };
 
 constexpr auto LOGS_FOLDER{ "LogsFolder" };
 constexpr auto VIDEO_LOGS_FOLDER{ "VideoLogsFolder" };
+constexpr auto DNN_FOLDER{ "DnnFolder" };
 constexpr auto CONFIG_LINUX{ "ConfigLinux" };
 constexpr auto CONFIG_WIN{ "ConfigWin" };
 
@@ -142,25 +143,10 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 
 
 
-	#ifdef DNN_2LAYERS_30CON_05DROPOUT
-		m_boundType = "Dnn_2Layer_30Con_05Dropout";
+	#ifdef DNN_2LAYERS_60CON_MULTIPLY09
+		m_boundType = "Dnn_2Layers_60Con_Multiply09";
 	#endif
 
-	#ifdef DNN_2LAYERS_30CON_09DROPOUT
-		m_boundType = "Dnn_2Layer_30Con_09Dropout";
-	#endif
-
-	#ifdef DNN_2LAYERS_30CONT
-		m_boundType = "Dnn_2Layer_30Cont";
-	#endif
-
-	#ifdef DNN_2LAYERS_30CONT_05DROPOUT
-		m_boundType = "Dnn_2Layer_30Cont_05Dropout";
-	#endif
-
-	#ifdef DNN_2LAYERS_30CONT_09DROPOUT
-		m_boundType = "Dnn_2Layer_30Cont_09Dropout";
-	#endif
 
 	m_maxNumEpochs = dlibConfig[MAX_NUM_EPOCHS].toInt();
 	m_minBatchSize = dlibConfig[MIN_BATCH_SIZE].toInt();
@@ -181,8 +167,11 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 
 	m_logsFolder = configPaths[LOGS_FOLDER].toString();
 	m_videoLogsFolder = configPaths[VIDEO_LOGS_FOLDER].toString();
+	m_dnnFolder = configPaths[DNN_FOLDER].toString();
 
 	m_logsFolderTestCase = m_logsFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split;
+	m_videoLogsTestCase = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split;
+	m_dnnFolderTestCase = m_dnnFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split;
 	#ifdef DEBUG
 	Logger->info("Dlib::configure() mini-batch size:{}", m_minBatchSize);
 	#endif
@@ -313,14 +302,14 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		list.push_back(this->load_truth_instances(listing[i]));
 	}
 	
-	m_synchronizationNetworkFileName = m_logsFolderTestCase + m_synchName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dat";
+	m_synchronizationNetworkFileName = m_dnnFolderTestCase + m_synchName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dat";
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() load_truth_instances ... ok");
 	Logger->debug("Dlib::configure() m_synchronizationNetworkFileName:{}", m_synchronizationNetworkFileName.toStdString());
 	Logger->debug("Dlib::configure() train_segmentation_network() ...");
 	#endif
-
+	Logger->debug("Dlib::configure() m_synchronizationNetworkFileName:{}", m_synchronizationNetworkFileName.toStdString());
 	int imageSize = m_config[DLIB].toObject()["ImageSize"].toInt();
 	int queqe = m_config[DLIB].toObject()["Queqe"].toInt();
 	QString dnnName = m_config[DLIB].toObject()["DnnName"].toString();
@@ -328,25 +317,26 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 	QString synch_nameNet = synch_name + "_" + QString::number(123) + ".dat";
 	bool useTwoCUDA = m_config[DLIB].toObject()["UseTwoCUDA"].toBool();
 
-	m_outputNetworkFileName = m_logsFolderTestCase + m_dnnName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dnn";
+	m_outputNetworkFileName = m_dnnFolderTestCase + m_dnnName + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime) + ".dnn";
 
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() m_outputNetworkFileName:{}", m_outputNetworkFileName.toStdString());
 	Logger->debug("Dlib::configure() test network...");
 	#endif
+	Logger->debug("Dlib::configure() m_outputNetworkFileName:{}", m_outputNetworkFileName.toStdString());
 	dlib::set_dnn_prefer_smallest_algorithms();
 
 	net_type segb;
+	//net_type2 segc;
 	m_epoch_counter = 0;
 	for(int i = 0 ; i < 2 ; i++)
 	{
 		segb = this->train_segmentation_network(list);
+
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
-		net_type segc;
-		dlib::deserialize(m_outputNetworkFileName.toStdString()) >> segc;
 		
-		DlibCase::testNetwork("test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
-		if (m_currentLearningRate <= 0.00001)
+		//dlib::deserialize(m_outputNetworkFileName.toStdString().c_str()) >> segb;
+		if (m_currentLearningRate <= 0.2)
 		{
 			break;
 		}
@@ -356,7 +346,9 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		}
 	}
 
-	DlibCase::testNetwork("train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
+	DlibCase::testNetwork("test", segb,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
+	//DlibCase::testNetwork("test_c", segc,(m_configPath+m_cleanTestPath), (m_configPath+m_gtTestPath), m_fileLoggerTest);
+	//DlibCase::testNetwork("train", segb,(m_configPath+m_cleanTrainPath), (m_configPath+m_gtTrainPath), m_fileLoggerTrain);
 	#ifdef DEBUG
 	Logger->debug("Dlib::configure() test network... ok");
 	#endif
@@ -394,13 +386,28 @@ void DlibCase::testNetwork(QString id, net_type segb, QString clean, QString gt,
 		if(m_postprocess[i].toObject()[NAME].toString() == ENCODER)
 		{
 			QJsonObject obj = m_postprocess[i].toObject();
+			obj[CONFIG] = m_postprocess[i].toObject()["Config2"];
 			QJsonObject config = obj[CONFIG].toObject();
+			m_fileName = m_videoLogsTestCase + "mp4_" + id + "_" + QString::number(m_dronNoise) + "_" + 
+								QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
+			Logger->debug("Dlib::configure() video:{}", m_fileName.toStdString());
+			config["Path"] = m_fileName;
+			obj[CONFIG] = config;
+			m_postprocess[i] = obj;
+			#ifdef DEBUG
+			qDebug() << "m_postprocess[i][CONFIG]:" << m_postprocess[i].toObject()[CONFIG];
+			#endif
+
+/*
+			QJsonObject obj = m_postprocess[i].toObject();
+			QJsonObject config = obj[CONFIG].toObject();
+			
 			// for video files:
 			m_fileName = m_videoLogsFolder + m_graphType + m_split + m_dronType + m_split + m_boundType + m_split +
 			id + "_" + QString::number(m_dronNoise) + "_" + QString::number(m_dronContrast) + "_" + QString::number(m_nowTime);
 			config["Path"] = m_fileName;
 			obj[CONFIG] = config;
-			m_postprocess[i] = obj;
+			m_postprocess[i] = obj;*/
 		}
 	}
 
@@ -632,18 +639,25 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
-	#ifdef DNN_2LAYERS_30CON_09DROPOUT
-		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
-		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
+	#ifdef DNN_2LAYERS_60CON_MULTIPLY09
+		dlib::layer<4>(seg_net).layer_details() = dlib::multiply_(0.9);
+		dlib::layer<7>(seg_net).layer_details() = dlib::multiply_(0.9);
 	#endif
 	
 	#ifdef DNN_2LAYERS_30CONT_09DROPOUT
-		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
-		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
+		//dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
+		//dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
 	#endif
 
-	#ifdef DEBUG
+	#ifdef DNN_1LAYERS_20CON_05DROPOUT
+		//dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.5);
+	#endif
+
+
 	std::cout << "seg_net:" << seg_net << std::endl;
+
+	#ifdef DEBUG
+	
 	Logger->debug("DlibCase::train_segmentation_network()");
 	Logger->debug("truth_images.size:{}", truth_images.size());
 	#endif
@@ -848,7 +862,8 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		// We will run until the learning rate has dropped by a factor of 1e-4.
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
 		
-		while (seg_trainer.get_learning_rate() >= 0.00000001)
+		//while (seg_trainer.get_learning_rate() >= 0.00000001)
+		while (seg_trainer.get_learning_rate() >= 0.2)
 		{
 			m_currentLearningRate = seg_trainer.get_learning_rate();
 			m_epoch_counter++;
@@ -886,5 +901,9 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	seg_trainer.get_net();
 	seg_net.clean();
 	m_timer.stop();
+
+	#ifdef DNN_1LAYERS_20CON_05DROPOUT
+		//dlib::layer<4>(seg_net).layer_details() = dlib::multiply_(0.5);
+	#endif
 	return seg_net;
 }

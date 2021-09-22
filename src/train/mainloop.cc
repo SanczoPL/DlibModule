@@ -22,6 +22,7 @@ constexpr auto DRON_CONTRAST{ "Contrast" };
 
 constexpr auto LOGS_FOLDER{ "LogsFolder" };
 constexpr auto VIDEO_LOGS_FOLDER{ "VideoLogsFolder" };
+constexpr auto DNN_FOLDER{ "DnnFolder" };
 constexpr auto CONFIG_LINUX{ "ConfigLinux" };
 constexpr auto CONFIG_WIN{ "ConfigWin" };
 
@@ -97,28 +98,33 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 
 	QString logsFolder = m_logsFolder;
 	QString videoLogsFolder = m_videoLogsFolder;
+	QString dnnFolder = m_dnnFolder;
 	checkAndCreateFolder(logsFolder);
 	checkAndCreateFolder(videoLogsFolder);
+	checkAndCreateFolder(dnnFolder);
 
 	for (int graf = 0 ; graf < m_graphTypes.size() ; graf++)
 	{
-		QString logsFolderWithGraph = logsFolder +  m_graphTypes[graf].toString() + m_split; 
-		QString videoLogsFolderWithGraph = videoLogsFolder +  m_graphTypes[graf].toString() + m_split;
-		checkAndCreateFolder(logsFolderWithGraph);
-		checkAndCreateFolder(videoLogsFolderWithGraph);
+		QString graphPrefix = m_graphTypes[graf].toString() + m_split;
+		checkAndCreateFolder(logsFolder +  graphPrefix);
+		checkAndCreateFolder(videoLogsFolder +  graphPrefix);
+		checkAndCreateFolder(m_dnnFolder +  graphPrefix);
+
 		for (int dron = 0 ; dron < m_dronTypes.size() ; dron++)
 		{
-			QString logsFolderWithGraphAndDron = logsFolderWithGraph + m_dronTypes[dron].toString() + m_split;
-			QString videoLogsFolderWithGraphAndDron = videoLogsFolderWithGraph + m_dronTypes[dron].toString() + m_split;
-			checkAndCreateFolder(logsFolderWithGraphAndDron);
-			checkAndCreateFolder(videoLogsFolderWithGraphAndDron);
+			QString dronPrefix = m_dronTypes[dron].toString() + m_split;
+			checkAndCreateFolder(logsFolder +  graphPrefix + dronPrefix);
+			checkAndCreateFolder(videoLogsFolder +  graphPrefix + dronPrefix);
+			checkAndCreateFolder(m_dnnFolder +  graphPrefix + dronPrefix);
+
 
 			for (int bound = 0 ; bound < m_boundsTypes.size() ; bound++)
 			{
-				QString logsFolderWithGraphAndDronAndBound = logsFolderWithGraphAndDron + m_boundsTypes[bound].toString() + m_split;
-				QString videoLogsFolderWithGraphAndDronAndBound = videoLogsFolderWithGraphAndDron + m_boundsTypes[bound].toString() + m_split;
-				checkAndCreateFolder(logsFolderWithGraphAndDronAndBound);
-				checkAndCreateFolder(videoLogsFolderWithGraphAndDronAndBound);
+				QString boundsPrefix = m_boundsTypes[bound].toString() + m_split;
+
+				checkAndCreateFolder(logsFolder +  graphPrefix + dronPrefix + boundsPrefix);
+				checkAndCreateFolder(videoLogsFolder +  graphPrefix + dronPrefix + boundsPrefix);
+				checkAndCreateFolder(m_dnnFolder +  graphPrefix + dronPrefix + boundsPrefix);
 
 				// Add graph type to config:
 				QJsonObject obj = m_config[DLIB].toObject();
@@ -258,6 +264,7 @@ void MainLoop::configure(QJsonObject const& a_config)
 
 	m_logsFolder = m_configPaths[LOGS_FOLDER].toString();
 	m_videoLogsFolder = m_configPaths[VIDEO_LOGS_FOLDER].toString();
+	m_dnnFolder = m_configPaths[DNN_FOLDER].toString();
 	m_graphTypes = a_config[DLIB].toObject()[GRAPH_TYPES].toArray();
 	m_boundsTypes = a_config[DLIB].toObject()[BOUNDS_TYPES].toArray();
 	m_dronTypes = a_config[DLIB].toObject()[DRON_TYPES].toArray();

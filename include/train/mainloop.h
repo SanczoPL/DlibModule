@@ -102,9 +102,9 @@ private:
 	QString m_boundsType{};
 	QString m_logsFolder{};
 	QString m_videoLogsFolder{};
+	QString m_dnnFolder{};
 	QString m_split{};
 	bool m_validTask{};
-	
 };
 
 #endif // TRAIN_MAINLOOP_H

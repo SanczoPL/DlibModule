@@ -118,6 +118,7 @@ class DlibCase : public QObject {
 		QString m_dronType{};
 		QString m_logsFolder{};
 		QString m_videoLogsFolder{};
+		QString m_dnnFolder{};
 		QString m_resultsPath{};
 		QString m_split{};
 
@@ -134,6 +135,8 @@ class DlibCase : public QObject {
 		QString m_inputType{};
 		QString m_outputType{};
 		QString m_logsFolderTestCase{};
+		QString m_videoLogsTestCase{};
+		QString m_dnnFolderTestCase{};
 		QString m_infoName{};
 
 		qint64 m_nowTime;
