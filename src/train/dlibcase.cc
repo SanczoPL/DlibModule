@@ -336,7 +336,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
 		
 		//dlib::deserialize(m_outputNetworkFileName.toStdString().c_str()) >> segb;
-		if (m_currentLearningRate <= 0.2)
+		if (m_currentLearningRate <= 0.00001)
 		{
 			break;
 		}
@@ -863,7 +863,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
 		
 		//while (seg_trainer.get_learning_rate() >= 0.00000001)
-		while (seg_trainer.get_learning_rate() >= 0.2)
+		while (seg_trainer.get_learning_rate() >= 0.0000001)
 		{
 			m_currentLearningRate = seg_trainer.get_learning_rate();
 			m_epoch_counter++;
