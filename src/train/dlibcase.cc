@@ -141,7 +141,10 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 		m_boundType = "Dnn_3Layer_40Con";
 	#endif
 
-
+	
+	#ifdef DNN_2LAYERS_60CON
+		m_boundType = "Dnn_2Layers_60Con";
+	#endif
 
 	#ifdef DNN_2LAYERS_60CON_MULTIPLY09
 		m_boundType = "Dnn_2Layers_60Con_Multiply09";
