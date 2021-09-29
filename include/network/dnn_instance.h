@@ -10,13 +10,13 @@
 #include <thread>
 #include "network/structures.h"
 
-//#define DNN_1LAYERS_20CON
+#define DNN_1LAYERS_20CON
 //#define DNN_1LAYERS_20CON
 //#define DNN_1LAYERS_40CON
 //#define DNN_1LAYERS_60CON
 
 //21
-#define DNN_2LAYERS_20CON
+//#define DNN_2LAYERS_20CON
 //22
 //#define DNN_2LAYERS_20CON_MULTIPLY05
 //23
