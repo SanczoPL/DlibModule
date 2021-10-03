@@ -150,6 +150,16 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 		m_boundType = "Dnn_2Layers_60Con_Multiply09";
 	#endif
 
+	#ifdef DNN_2LAYERS_60CON_DROPOUT05
+		m_boundType = "Dnn_2Layers_60Con_Dropout05";
+	#endif
+
+	#ifdef DNN_2LAYERS_60CON_DROPOUT09
+		m_boundType = "Dnn_2Layers_60Con_Dropout09";
+	#endif
+	
+
+
 
 	m_maxNumEpochs = dlibConfig[MAX_NUM_EPOCHS].toInt();
 	m_minBatchSize = dlibConfig[MIN_BATCH_SIZE].toInt();
@@ -642,10 +652,24 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		std::cout << "seg_net:" << seg_net << std::endl;
 	#endif
 
+	#ifdef DNN_2LAYERS_60CON_MULTIPLY05
+		dlib::layer<4>(seg_net).layer_details() = dlib::multiply_(0.5);
+		dlib::layer<7>(seg_net).layer_details() = dlib::multiply_(0.5);
+	#endif
+	#ifdef DNN_2LAYERS_60CON_DROPOUT05
+		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.5);
+		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.5);
+	#endif
+
 	#ifdef DNN_2LAYERS_60CON_MULTIPLY09
 		dlib::layer<4>(seg_net).layer_details() = dlib::multiply_(0.9);
 		dlib::layer<7>(seg_net).layer_details() = dlib::multiply_(0.9);
 	#endif
+	#ifdef DNN_2LAYERS_60CON_DROPOUT09
+		dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
+		dlib::layer<7>(seg_net).layer_details() = dlib::dropout_(0.9);
+	#endif
+	
 	
 	#ifdef DNN_2LAYERS_30CONT_09DROPOUT
 		//dlib::layer<4>(seg_net).layer_details() = dlib::dropout_(0.9);
