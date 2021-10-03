@@ -142,6 +142,23 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	>>>>>>>>;                                                 //6
 #endif
 
+#ifdef DNN_2LAYERS_60CON_DROPOUT05
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<60, 5, 5, 1, 1,dlib::dropout<     //3 
+	dlib::relu<dlib::con<60, 5, 5, 1, 1,dlib::dropout<     //3 
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>>>;                                                 //8
+#endif
+
+#ifdef DNN_2LAYERS_60CON_DROPOUT09
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<60, 5, 5, 1, 1,dlib::dropout<     //3 
+	dlib::relu<dlib::con<60, 5, 5, 1, 1,dlib::dropout<     //3 
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>>>;                                                 //6
+#endif
 
 
 
