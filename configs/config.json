@@ -22,7 +22,7 @@
 		"DronTypes" : [ "CONTRAST_95", "CONTRAST_65","CONTRAST_35","CONTRAST_5"],
 		"GraphTypes":["Graph_dlib_contrast"],
 		"BoundsTypes_all" : [ "Dnn_2Layers_60Con_Multiply09", "Dnn_2Layer_20Con", "Dnn_2Layers_60Con","Dnn_1Layer_20Con"],
-		"BoundsTypes" : ["Dnn_2Layers_60Con_Dropout09"],
+		"BoundsTypes" : ["Dnn_2Layers_60Con"],
 		"MaxNumEpochs": 200,
 		"SynchTime": 20,
 		"momentum": 0.9,
