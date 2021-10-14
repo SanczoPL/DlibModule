@@ -152,8 +152,8 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 							config[DRON_TYPE] = m_dronTypes[dron].toString();
 
 							config[DRON_NOISE_START] = double(i);
-							config[DRON_NOISE_STOP] = double(i + 0.04);
-							config[DRON_NOISE_DELTA] = double(0.01);
+							config[DRON_NOISE_STOP] = double(i + 0.03);
+							config[DRON_NOISE_DELTA] = double(0.001);
 
 							//config[DRON_CONTRAST_START] = 100.00;
 							//config[DRON_CONTRAST_STOP] = 100.1;
@@ -177,8 +177,8 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 								contrastStart = 5;
 							}
 							config[DRON_CONTRAST_START] = double(contrastStart);
-							config[DRON_CONTRAST_STOP] = double(contrastStart + 0.04);
-							config[DRON_CONTRAST_DELTA] = double(0.01);
+							config[DRON_CONTRAST_STOP] = double(contrastStart + 0.03);
+							config[DRON_CONTRAST_DELTA] = double(0.001);
 							
 							obj[CONFIG] = config;
 							arrObj[j] = obj;
