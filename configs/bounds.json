@@ -5,5 +5,12 @@
 		{
 
 		}
+	},
+	"Graph_dlib_contrast":
+	{
+		"Dnn_2Layer": 
+		{
+
+		}
 	}
 }

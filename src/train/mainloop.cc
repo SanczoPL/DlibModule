@@ -138,7 +138,7 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 				MainLoop::loadConfigs(m_configPaths, m_graphTypes[graf].toString(), m_boundsTypes[bound].toString());
 				
 				// Add noise:
-				for (int i = 0; i < 101; i += 5)
+				for (int i = 0; i < 101; i += 5)// noise:
 				{
 					for(int j = 0 ; j < m_dlibConfig.preprocess.size() ; j++)
 					{
@@ -152,13 +152,34 @@ void MainLoop::createConfig(QJsonObject const& a_config)
 							config[DRON_TYPE] = m_dronTypes[dron].toString();
 
 							config[DRON_NOISE_START] = double(i);
-							config[DRON_NOISE_STOP] = double(i + 0.1);
+							config[DRON_NOISE_STOP] = double(i + 0.04);
 							config[DRON_NOISE_DELTA] = double(0.01);
 
-							config[DRON_CONTRAST_START] = 100.00;
-							config[DRON_CONTRAST_STOP] = 100.1;
-							config[DRON_CONTRAST_DELTA] = 0.01;
+							//config[DRON_CONTRAST_START] = 100.00;
+							//config[DRON_CONTRAST_STOP] = 100.1;
+							//config[DRON_CONTRAST_DELTA] = 0.01;
 
+							int contrastStart{100};
+							if (m_dronTypes[dron].toString() == "CONTRAST_95")
+							{
+								contrastStart = 95;
+							}
+							else if (m_dronTypes[dron].toString() == "CONTRAST_65")
+							{
+								contrastStart = 65;
+							}
+							else if (m_dronTypes[dron].toString() == "CONTRAST_35")
+							{
+								contrastStart = 35;
+							}
+							else if (m_dronTypes[dron].toString() == "CONTRAST_5")
+							{
+								contrastStart = 5;
+							}
+							config[DRON_CONTRAST_START] = double(contrastStart);
+							config[DRON_CONTRAST_STOP] = double(contrastStart + 0.04);
+							config[DRON_CONTRAST_DELTA] = double(0.01);
+							
 							obj[CONFIG] = config;
 							arrObj[j] = obj;
 							m_dlibConfig.preprocess = arrObj;
