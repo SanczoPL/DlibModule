@@ -19,7 +19,7 @@
 		"BoundsType" : "",
 		"DronTypes_ALL" : [ "BLACK", "WHITE","BLACK_WHITE"],
 		"DronTypes2" : [ "BLACK_WHITE", "WHITE","BLACK"],
-		"DronTypes" : [ "CONTRAST_", "CONTRAST_35","CONTRAST_65","CONTRAST_95"],
+		"DronTypes" : [ "CONTRAST_5", "CONTRAST_35","CONTRAST_65","CONTRAST_95"],
 		"GraphTypes":["Graph_dlib_contrast"],
 		"BoundsTypes_all" : [ "Dnn_2Layers_60Con_Multiply09", "Dnn_2Layer_20Con", "Dnn_2Layers_60Con","Dnn_1Layer_20Con"],
 		"BoundsTypes" : ["Dnn_2Layers_120Con"],
