@@ -146,6 +146,11 @@ void DlibCase::loadFromConfig(QJsonObject const& a_config)
 		m_boundType = "Dnn_2Layers_60Con";
 	#endif
 
+	#ifdef DNN_2LAYERS_120CON
+		m_boundType = "Dnn_2Layers_120Con";
+	#endif
+
+
 	#ifdef DNN_2LAYERS_60CON_MULTIPLY09
 		m_boundType = "Dnn_2Layers_60Con_Multiply09";
 	#endif
@@ -716,7 +721,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 	#endif
 
 	seg_trainer.set_learning_rate_shrink_factor(0.1);
-	seg_trainer.set_iterations_without_progress_threshold(700);
+	seg_trainer.set_iterations_without_progress_threshold(1000);
 	seg_trainer.set_mini_batch_size(m_minBatchSize);
 	seg_trainer.set_max_num_epochs(m_maxNumEpochs);
 	seg_trainer.be_verbose();
@@ -890,7 +895,7 @@ net_type DlibCase::train_segmentation_network(const std::vector<truth_instance>&
 		Logger->debug("seg_trainer.get_learning_rate():{}", seg_trainer.get_learning_rate());
 		
 		//while (seg_trainer.get_learning_rate() >= 0.00000001)
-		while (seg_trainer.get_learning_rate() >= 0.0000001)
+		while (seg_trainer.get_learning_rate() >= 0.00000001)
 		{
 			m_currentLearningRate = seg_trainer.get_learning_rate();
 			m_epoch_counter++;

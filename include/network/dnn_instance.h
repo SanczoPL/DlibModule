@@ -30,7 +30,8 @@
 
 
 //27
-#define DNN_2LAYERS_60CON
+//#define DNN_2LAYERS_60CON
+#define DNN_2LAYERS_120CON
 //28
 //#define DNN_2LAYERS_60CON_MULTIPLY05
 //29
@@ -123,6 +124,14 @@ using net_type = dlib::loss_binary_log_per_pixel <          //1
 	>>>>>>;                                                 //6
 #endif
 
+#ifdef DNN_2LAYERS_120CON
+using net_type = dlib::loss_binary_log_per_pixel <          //1
+	dlib::con<1, 1, 1, 1, 1,                              //1
+	dlib::relu<dlib::con<120, 5, 5, 1, 1,                    //2
+	dlib::relu<dlib::con<120, 5, 5, 1, 1,                    //2
+	dlib::input<dlib::matrix<unsigned char>>                //0
+	>>>>>>;                                                 //6
+#endif
 
 #ifdef DNN_2LAYERS_60CON_MULTIPLY05
 using net_type = dlib::loss_binary_log_per_pixel <          //1
