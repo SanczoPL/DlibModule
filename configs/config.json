@@ -8,7 +8,7 @@
 	"Dlib":
 	{
 		"MinibatchSize": 100,
-		"ImageSize": 100,
+		"ImageSize": 50,
 		"Queqe": 200,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
@@ -21,8 +21,9 @@
 		"DronTypes2" : [ "BLACK_WHITE", "WHITE","BLACK"],
 		"DronTypes" : [ "CONTRAST_5", "CONTRAST_35","CONTRAST_65","CONTRAST_95"],
 		"GraphTypes":["Graph_dlib_contrast"],
-		"BoundsTypes_all" : [ "Dnn_2Layers_60Con_Multiply09", "Dnn_2Layer_20Con", "Dnn_2Layers_60Con","Dnn_1Layer_20Con"],
-		"BoundsTypes" : ["Dnn_2Layers_60Con_Multiply09"],
+		"BoundsTypes_all" : [ "Dnn_2Layers_60Con_Multiply09", "Dnn_2Layers_60Con_Dropout09", 
+							"Dnn_2Layer_20Con", "Dnn_2Layers_60Con","Dnn_1Layer_20Con"],
+		"BoundsTypes" : ["Dnn_2Layers_60Con_Dropout09"],
 		"MaxNumEpochs": 200,
 		"SynchTime": 20,
 		"momentum": 0.9,

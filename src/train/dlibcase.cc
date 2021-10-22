@@ -354,7 +354,7 @@ void DlibCase::configure(QJsonObject const& a_config, QJsonArray const& a_prepro
 		dlib::serialize(m_outputNetworkFileName.toStdString().c_str()) << segb;
 		
 		//dlib::deserialize(m_outputNetworkFileName.toStdString().c_str()) >> segb;
-		if (m_currentLearningRate <= 0.00001)
+		if (m_currentLearningRate <= 0.0000001)
 		{
 			break;
 		}
