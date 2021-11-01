@@ -55,9 +55,9 @@ int main(int argc, char* argv[])
 }
 
 void intro() {
-	Logger->info("\n\n\t\033[1;31mDlib Network v2.0\033[0m\n"
+	Logger->info("\n\n\t\033[1;31mDlib Network v3.3\033[0m\n"
 		"\tAuthor: Grzegorz Matczak\n"
-		"\t18.07.2021\n");
+		"\t01.11.2021\n");
 }
 
 QJsonObject readConfig(QString name)
