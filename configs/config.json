@@ -12,7 +12,7 @@
 		"Queqe": 200,
 		"DnnName" : "dnn",
 		"SynchName": "temp",
-		"UseTwoCUDA" :  true,
+		"UseTwoCUDA" :  false,
 		"LearningRate" : 0.1,
 		"DronType" : "",
 		"GraphType":"",
